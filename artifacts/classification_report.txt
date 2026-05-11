@@ -1,0 +1,13 @@
+TRAINED MODEL RESULTS
+Best model: mlp_small
+Task: phishing website detection
+
+              precision    recall  f1-score   support
+
+  legitimate     0.9548    0.9773    0.9659      1232
+    phishing     0.9706    0.9418    0.9560       980
+
+    accuracy                         0.9616      2212
+   macro avg     0.9627    0.9596    0.9609      2212
+weighted avg     0.9618    0.9616    0.9615      2212
+

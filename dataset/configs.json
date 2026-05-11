@@ -1,0 +1,10 @@
+{
+  "source_data": "C:\\Users\\ADMIN\\Documents\\Codex\\2026-04-30\\files-mentioned-by-the-user-deep\\url_dataset.csv",
+  "task": "phishing website classification",
+  "train_ratio": 0.6499,
+  "valid_ratio": 0.15,
+  "test_ratio": 0.2001,
+  "valid_size": 0.15,
+  "test_size": 0.2,
+  "random_state": 42
+}

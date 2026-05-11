@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Phishing Website Detection</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel">
+        <div class="heading">
+          <p class="eyebrow">Deep Learning Demo</p>
+          <h1>Phishing Website Detection</h1>
+        </div>
+
+        <form id="predict-form" class="form">
+          <label for="url">URL can kiem tra</label>
+          <div class="input-row">
+            <input id="url" name="url" type="text" placeholder="https://example.com/login" autocomplete="off" />
+            <button type="submit">Phan tich</button>
+          </div>
+        </form>
+
+        <section id="result" class="result hidden" aria-live="polite">
+          <div>
+            <p class="result-label">Ket qua</p>
+            <h2 id="label">-</h2>
+            <p id="model-source" class="model-source"></p>
+            <p id="html-fetch" class="model-source"></p>
+          </div>
+          <div class="score">
+            <span id="confidence">0%</span>
+            <small>confidence</small>
+          </div>
+        </section>
+
+        <section id="explanation" class="explanation hidden">
+          <h3>AI Explanation</h3>
+          <blockquote id="explanation-text"></blockquote>
+
+          <h3>Risk Factors</h3>
+          <div class="risk-table-wrap">
+            <table class="risk-table">
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th>Status</th>
+                  <th>Risk</th>
+                </tr>
+              </thead>
+              <tbody id="risk-factors"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="features" class="features hidden"></section>
+      </section>
+    </main>
+
+    <script src="/static/script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,89 @@
+{
+  "model_type": "sklearn_mlp_deep_learning",
+  "best_model": "mlp_small",
+  "model_file": "artifacts\\deep_learning_model.joblib",
+  "classification_report_file": "artifacts\\classification_report.txt",
+  "model_results_file": "artifacts\\model_results.csv",
+  "dataset_dir": "dataset",
+  "chart_dir": "chart",
+  "test_size": 0.2,
+  "valid_size": 0.15,
+  "random_state": 42,
+  "train_rows": 7185,
+  "valid_rows": 1658,
+  "test_rows": 2212,
+  "feature_names": [
+    "having_IPhaving_IP_Address",
+    "URLURL_Length",
+    "Shortining_Service",
+    "having_At_Symbol",
+    "double_slash_redirecting",
+    "Prefix_Suffix",
+    "having_Sub_Domain",
+    "SSLfinal_State",
+    "Domain_registeration_length",
+    "Favicon",
+    "port",
+    "HTTPS_token",
+    "Request_URL",
+    "URL_of_Anchor",
+    "Links_in_tags",
+    "SFH",
+    "Submitting_to_email",
+    "Abnormal_URL",
+    "Redirect",
+    "on_mouseover",
+    "RightClick",
+    "popUpWidnow",
+    "Iframe",
+    "age_of_domain",
+    "DNSRecord",
+    "web_traffic",
+    "Page_Rank",
+    "Google_Index",
+    "Links_pointing_to_page",
+    "Statistical_report"
+  ],
+  "candidate_results": [
+    {
+      "name": "mlp_small",
+      "valid_accuracy": 0.9601930036188179,
+      "valid_f1": 0.9544827586206897,
+      "test_accuracy": 0.9615732368896925,
+      "test_f1": 0.955981356809943,
+      "selected": true
+    },
+    {
+      "name": "mlp_deep",
+      "valid_accuracy": 0.9541616405307599,
+      "valid_f1": 0.9478737997256516,
+      "test_accuracy": 0.9624773960216998,
+      "test_f1": 0.957282552753474,
+      "selected": false
+    },
+    {
+      "name": "mlp_wide",
+      "valid_accuracy": 0.9595898673100121,
+      "valid_f1": 0.9542662116040955,
+      "test_accuracy": 0.9624773960216998,
+      "test_f1": 0.9573703133025167,
+      "selected": false
+    }
+  ],
+  "confusion_matrix": {
+    "labels": [
+      "legitimate",
+      "phishing"
+    ],
+    "values": [
+      [
+        1204,
+        28
+      ],
+      [
+        57,
+        923
+      ]
+    ]
+  }
+}

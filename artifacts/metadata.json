@@ -1,0 +1,21 @@
+{
+  "project": "Phishing Website Detection Demo",
+  "generated_by": "train_model.py",
+  "artifact_version": "1.2",
+  "dataset_source": [
+    "https://www.kaggle.com/datasets/akashkr/phishing-website-dataset"
+  ],
+  "training_file": "C:\\Users\\ADMIN\\Documents\\Codex\\2026-04-30\\files-mentioned-by-the-user-deep\\url_dataset.csv",
+  "html_archive": null,
+  "model_file": "artifacts\\best_model.json",
+  "deep_learning_model_file": "artifacts\\deep_learning_model.joblib",
+  "classification_report_file": "artifacts\\classification_report.txt",
+  "model_results_file": "artifacts\\model_results.csv",
+  "model_type": "url_html_ensemble",
+  "url_class_counts": {
+    "phishing": 4898,
+    "legitimate": 6157
+  },
+  "html_class_counts": null,
+  "note": "The URL dataset contains pre-extracted website features. The optional HTML archive trains a second content-based model from local HTML snapshots. Runtime prediction fetches HTML from the submitted URL when possible. Runtime prediction prefers the trained MLP deep learning model when present, then falls back to the Naive Bayes URL/HTML ensemble and heuristic rules."
+}
