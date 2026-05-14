@@ -3,7 +3,9 @@ from __future__ import annotations
 """Train phishing-detection models and write evaluation artifacts.
 
 Default mode trains the Kaggle feature-based models used by the web demo:
-- an MLPClassifier neural network saved as deep_learning_model.joblib
+- 2 baseline models for comparison
+- 2 MLPClassifier neural networks for deep-learning comparison
+- the best deep-learning model saved as deep_learning_model.joblib
 - a Naive Bayes fallback saved inside best_model.json
 - classification_report.txt for presentation/reporting
 
@@ -21,6 +23,7 @@ from pathlib import Path
 
 import joblib
 import torch
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
     classification_report,
@@ -31,6 +34,7 @@ from sklearn.metrics import (
     roc_auc_score,
 )
 from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
@@ -40,6 +44,10 @@ from torch.utils.data import DataLoader, Dataset
 from app.features import HTML_FEATURE_NAMES, KAGGLE_FEATURE_NAMES, extract_html_features
 from app.model import CharCnnUrlClassifier
 
+
+FeatureRow = tuple[str, dict[str, int]]
+Metrics = dict[str, float]
+ModelCandidate = dict[str, str | Pipeline]
 
 PHISHING_LABEL = "-1"
 LEGITIMATE_LABEL = "1"
@@ -113,7 +121,7 @@ def load_url_label_rows(data_path: Path) -> list[tuple[str, int]]:
     return parsed_rows
 
 
-def evaluate_url_cnn(model: nn.Module, loader: DataLoader) -> dict[str, float]:
+def evaluate_url_cnn(model: nn.Module, loader: DataLoader) -> Metrics:
     model.eval()
     probabilities: list[float] = []
     labels: list[int] = []
@@ -144,7 +152,7 @@ def train_url_cnn_model(
     epochs: int = 5,
     test_size: float = 0.2,
     random_state: int = 42,
-) -> dict[str, float]:
+) -> Metrics:
     rows = load_url_label_rows(data_path)
     train_rows, test_rows = train_test_split(
         rows,
@@ -191,7 +199,7 @@ def train_url_cnn_model(
 # ---------------------------------------------------------------------------
 
 
-def _train_categorical_model(rows: list[tuple[str, dict[str, int]]], feature_names: list[str]) -> dict:
+def _train_categorical_model(rows: list[FeatureRow], feature_names: list[str]) -> dict:
     label_counts = Counter(label for label, _ in rows)
     labels = (PHISHING_LABEL, LEGITIMATE_LABEL)
     missing_labels = [label for label in labels if label_counts[label] == 0]
@@ -254,7 +262,7 @@ def train_url_model(data_path: Path) -> dict:
     return artifact
 
 
-def load_kaggle_feature_rows(data_path: Path) -> list[tuple[str, dict[str, int]]]:
+def load_kaggle_feature_rows(data_path: Path) -> list[FeatureRow]:
     rows = list(csv.DictReader(data_path.open("r", encoding="utf-8-sig", newline="")))
     if not rows:
         raise ValueError(f"No rows found in dataset: {data_path}")
@@ -273,7 +281,7 @@ def load_kaggle_feature_rows(data_path: Path) -> list[tuple[str, dict[str, int]]
     return model_rows
 
 
-def build_kaggle_feature_matrix(rows: list[tuple[str, dict[str, int]]]) -> tuple[list[list[int]], list[int]]:
+def build_kaggle_feature_matrix(rows: list[FeatureRow]) -> tuple[list[list[int]], list[int]]:
     x = [[features[name] for name in KAGGLE_FEATURE_NAMES] for _, features in rows]
     y = [1 if label == PHISHING_LABEL else 0 for label, _ in rows]
     return x, y
@@ -283,7 +291,7 @@ def label_to_name(label: str | int) -> str:
     return "phishing" if label == PHISHING_LABEL or label == 1 else "legitimate"
 
 
-def write_feature_rows(path: Path, rows: list[tuple[str, dict[str, int]]]) -> None:
+def write_feature_rows(path: Path, rows: list[FeatureRow]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=["label", "label_name", *KAGGLE_FEATURE_NAMES])
@@ -297,11 +305,11 @@ def write_feature_rows(path: Path, rows: list[tuple[str, dict[str, int]]]) -> No
 
 
 def split_kaggle_rows(
-    rows: list[tuple[str, dict[str, int]]],
+    rows: list[FeatureRow],
     valid_size: float,
     test_size: float,
     random_state: int,
-) -> tuple[list[tuple[str, dict[str, int]]], list[tuple[str, dict[str, int]]], list[tuple[str, dict[str, int]]]]:
+) -> tuple[list[FeatureRow], list[FeatureRow], list[FeatureRow]]:
     if valid_size <= 0 or test_size <= 0 or valid_size + test_size >= 1:
         raise ValueError("--valid-size and --test-size must be positive and sum to less than 1.")
 
@@ -325,12 +333,13 @@ def split_kaggle_rows(
 
 def write_dataset_files(
     dataset_dir: Path,
-    rows: list[tuple[str, dict[str, int]]],
-    train_rows: list[tuple[str, dict[str, int]]],
-    valid_rows: list[tuple[str, dict[str, int]]],
-    test_rows: list[tuple[str, dict[str, int]]],
+    rows: list[FeatureRow],
+    train_rows: list[FeatureRow],
+    valid_rows: list[FeatureRow],
+    test_rows: list[FeatureRow],
     config: dict,
 ) -> None:
+    dataset_dir.mkdir(parents=True, exist_ok=True)
     write_feature_rows(dataset_dir / "features.csv", rows)
     write_feature_rows(dataset_dir / "train.csv", train_rows)
     write_feature_rows(dataset_dir / "valid.csv", valid_rows)
@@ -355,67 +364,66 @@ def write_dataset_files(
 
 
 # ---------------------------------------------------------------------------
-# MLP deep-learning model for Kaggle feature datasets.
+# Model comparison for Kaggle feature datasets.
 # ---------------------------------------------------------------------------
 
 
-def build_mlp_candidates(max_iter: int, random_state: int) -> dict[str, Pipeline]:
-    return {
-        "mlp_small": Pipeline(
-            [
-                ("scaler", StandardScaler()),
-                (
-                    "classifier",
-                    MLPClassifier(
-                        hidden_layer_sizes=(64, 32),
-                        activation="relu",
-                        solver="adam",
-                        alpha=0.0005,
-                        learning_rate_init=0.001,
-                        early_stopping=True,
-                        max_iter=max_iter,
-                        random_state=random_state,
-                    ),
-                ),
-            ]
-        ),
-        "mlp_deep": Pipeline(
-            [
-                ("scaler", StandardScaler()),
-                (
-                    "classifier",
-                    MLPClassifier(
-                        hidden_layer_sizes=(128, 64, 32),
-                        activation="relu",
-                        solver="adam",
-                        alpha=0.0005,
-                        learning_rate_init=0.001,
-                        early_stopping=True,
-                        max_iter=max_iter,
-                        random_state=random_state,
-                    ),
-                ),
-            ]
-        ),
-        "mlp_wide": Pipeline(
-            [
-                ("scaler", StandardScaler()),
-                (
-                    "classifier",
-                    MLPClassifier(
-                        hidden_layer_sizes=(128, 64),
-                        activation="relu",
-                        solver="adam",
-                        alpha=0.001,
-                        learning_rate_init=0.001,
-                        early_stopping=True,
-                        max_iter=max_iter,
-                        random_state=random_state,
-                    ),
-                ),
-            ]
-        ),
-    }
+def _scaled_pipeline(classifier) -> Pipeline:
+    return Pipeline(
+        [
+            ("scaler", StandardScaler()),
+            ("classifier", classifier),
+        ]
+    )
+
+
+def build_model_candidates(max_iter: int, random_state: int) -> list[ModelCandidate]:
+    return [
+        {
+            "name": "baseline_logistic_regression",
+            "family": "baseline",
+            "model": _scaled_pipeline(
+                LogisticRegression(max_iter=max_iter, random_state=random_state)
+            ),
+        },
+        {
+            "name": "baseline_gaussian_naive_bayes",
+            "family": "baseline",
+            "model": Pipeline([("classifier", GaussianNB())]),
+        },
+        {
+            "name": "deep_learning_mlp_small",
+            "family": "deep_learning",
+            "model": _scaled_pipeline(
+                MLPClassifier(
+                    hidden_layer_sizes=(64, 32),
+                    activation="relu",
+                    solver="adam",
+                    alpha=0.0005,
+                    learning_rate_init=0.001,
+                    early_stopping=True,
+                    max_iter=max_iter,
+                    random_state=random_state,
+                )
+            ),
+        },
+        {
+            "name": "deep_learning_mlp_deep",
+            "family": "deep_learning",
+            "model": _scaled_pipeline(
+                MLPClassifier(
+                    hidden_layer_sizes=(128, 64, 32),
+                    activation="relu",
+                    solver="adam",
+                    alpha=0.0005,
+                    learning_rate_init=0.001,
+                    early_stopping=True,
+                    max_iter=max_iter,
+                    random_state=random_state,
+                )
+            ),
+        },
+    ]
 
 
 def write_model_results(path: Path, results: list[dict]) -> None:
@@ -423,7 +431,15 @@ def write_model_results(path: Path, results: list[dict]) -> None:
     with path.open("w", encoding="utf-8", newline="") as file:
         writer = csv.DictWriter(
             file,
-            fieldnames=["name", "valid_accuracy", "valid_f1", "test_accuracy", "test_f1", "selected"],
+            fieldnames=[
+                "name",
+                "family",
+                "valid_accuracy",
+                "valid_f1",
+                "test_accuracy",
+                "test_f1",
+                "selected_for_runtime",
+            ],
         )
         writer.writeheader()
         writer.writerows(results)
@@ -446,6 +462,7 @@ def write_evaluation_charts(
         return
 
     chart_dir.mkdir(parents=True, exist_ok=True)
+    artifacts_dir.mkdir(parents=True, exist_ok=True)
 
     names = [row["name"] for row in model_results]
     valid_scores = [float(row["valid_f1"]) for row in model_results]
@@ -479,7 +496,7 @@ def write_evaluation_charts(
     plt.close()
 
     metrics = ["accuracy", "f1"]
-    best_row = next(row for row in model_results if row["selected"])
+    best_row = next(row for row in model_results if row["selected_for_runtime"])
     metric_values = [float(best_row["test_accuracy"]), float(best_row["test_f1"])]
     plt.figure(figsize=(5, 4))
     plt.bar(metrics, metric_values, color=["#2f7666", "#24594f"])
@@ -540,6 +557,7 @@ def train_deep_learning_url_model(
     random_state: int = 42,
     max_iter: int = 300,
 ) -> dict:
+    output_dir.mkdir(parents=True, exist_ok=True)
     rows = load_kaggle_feature_rows(data_path)
     labels = [label for label, _ in rows]
     if len(set(labels)) < 2:
@@ -571,11 +589,17 @@ def train_deep_learning_url_model(
     x_test, y_test = build_kaggle_feature_matrix(test_rows)
 
     results = []
-    best_name = ""
-    best_model: Pipeline | None = None
-    best_score = -1.0
+    best_deep_learning_name = ""
+    best_deep_learning_model: Pipeline | None = None
+    best_deep_learning_score = -1.0
 
-    for name, model in build_mlp_candidates(max_iter=max_iter, random_state=random_state).items():
+    for candidate in build_model_candidates(max_iter=max_iter, random_state=random_state):
+        name = str(candidate["name"])
+        family = str(candidate["family"])
+        model = candidate["model"]
+        if not isinstance(model, Pipeline):
+            raise TypeError(f"Model candidate must be a sklearn Pipeline: {name}")
+
         model.fit(x_train, y_train)
         valid_predictions = model.predict(x_valid).tolist()
         test_predictions = model.predict(x_test).tolist()
@@ -583,25 +607,26 @@ def train_deep_learning_url_model(
         test_f1 = f1_score(y_test, test_predictions, pos_label=1, zero_division=0)
         row = {
             "name": name,
+            "family": family,
             "valid_accuracy": accuracy_score(y_valid, valid_predictions),
             "valid_f1": valid_f1,
             "test_accuracy": accuracy_score(y_test, test_predictions),
             "test_f1": test_f1,
-            "selected": False,
+            "selected_for_runtime": False,
         }
         results.append(row)
-        if valid_f1 > best_score:
-            best_name = name
-            best_model = model
-            best_score = valid_f1
+        if family == "deep_learning" and valid_f1 > best_deep_learning_score:
+            best_deep_learning_name = name
+            best_deep_learning_model = model
+            best_deep_learning_score = valid_f1
 
-    if best_model is None:
+    if best_deep_learning_model is None:
         raise RuntimeError("No deep learning model was trained.")
 
-    best_predictions = best_model.predict(x_test).tolist()
-    best_probabilities = best_model.predict_proba(x_test)[:, 1].tolist()
+    best_predictions = best_deep_learning_model.predict(x_test).tolist()
+    best_probabilities = best_deep_learning_model.predict_proba(x_test)[:, 1].tolist()
     for row in results:
-        row["selected"] = row["name"] == best_name
+        row["selected_for_runtime"] = row["name"] == best_deep_learning_name
 
     report_body = classification_report(
         y_test,
@@ -614,7 +639,7 @@ def train_deep_learning_url_model(
     matrix = confusion_matrix(y_test, best_predictions, labels=[0, 1]).tolist()
     report_text = (
         "TRAINED MODEL RESULTS\n"
-        f"Best model: {best_name}\n"
+        f"Runtime deep learning model: {best_deep_learning_name}\n"
         "Task: phishing website detection\n\n"
         f"{report_body}\n"
     )
@@ -626,8 +651,8 @@ def train_deep_learning_url_model(
     joblib.dump(
         {
             "model_type": "sklearn_mlp_deep_learning",
-            "model_name": best_name,
-            "pipeline": best_model,
+            "model_name": best_deep_learning_name,
+            "pipeline": best_deep_learning_model,
             "feature_names": KAGGLE_FEATURE_NAMES,
             "positive_class": 1,
             "class_names": {0: "legitimate", 1: "phishing"},
@@ -643,13 +668,13 @@ def train_deep_learning_url_model(
         confusion_values=matrix,
         test_labels=y_test,
         test_probabilities=best_probabilities,
-        best_model=best_model,
+        best_model=best_deep_learning_model,
         x_test=x_test,
     )
 
     metrics = {
         "model_type": "sklearn_mlp_deep_learning",
-        "best_model": best_name,
+        "best_model": best_deep_learning_name,
         "model_file": str(model_path),
         "classification_report_file": str(report_path),
         "model_results_file": str(results_path),
@@ -687,7 +712,7 @@ def _label_from_zip_path(path: str) -> str | None:
 
 
 def train_html_model(archive_path: Path) -> dict:
-    rows: list[tuple[str, dict[str, int]]] = []
+    rows: list[FeatureRow] = []
     with zipfile.ZipFile(archive_path) as archive:
         for entry in archive.infolist():
             if entry.is_dir() or not entry.filename.lower().endswith((".html", ".htm")):
@@ -837,6 +862,7 @@ def run_kaggle_task(args: argparse.Namespace, data_path: Path, output_dir: Path)
     html_archive_path = Path(args.html_archive) if args.html_archive else None
     dataset_dir = Path(args.dataset_dir)
     chart_dir = Path(args.chart_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     deep_learning_metrics = None
     if not args.skip_deep_learning:

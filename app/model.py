@@ -16,11 +16,13 @@ except ModuleNotFoundError:  # pragma: no cover - allows the demo API to run bef
     torch = None
     nn = None
 
-from app.features import extract_html_features, extract_url_features, heuristic_phishing_score, to_kaggle_features
+from app.features import UrlFeatures, extract_html_features, extract_url_features, heuristic_phishing_score, to_kaggle_features
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 MODEL_PATH = PROJECT_ROOT / "artifacts" / "best_model.json"
 DEEP_MODEL_PATH = PROJECT_ROOT / "artifacts" / "deep_learning_model.joblib"
+PHISHING_LABEL = "-1"
+LEGITIMATE_LABEL = "1"
 
 
 if nn is not None:
@@ -93,7 +95,7 @@ class PhishingDetector:
 
     def _predict_with_categorical_model(self, model: dict, feature_values: dict[str, int]) -> float:
         log_scores = dict(model["priors"])
-        for label in ("-1", "1"):
+        for label in (PHISHING_LABEL, LEGITIMATE_LABEL):
             for name in model["feature_names"]:
                 value = str(feature_values[name])
                 likelihood = model["likelihoods"][label][name]
@@ -103,18 +105,18 @@ class PhishingDetector:
                     log_scores[label] += likelihood.get("__UNK__", min(likelihood.values()))
 
         max_log = max(log_scores.values())
-        phishing_score = math.exp(log_scores["-1"] - max_log)
-        legitimate_score = math.exp(log_scores["1"] - max_log)
+        phishing_score = math.exp(log_scores[PHISHING_LABEL] - max_log)
+        legitimate_score = math.exp(log_scores[LEGITIMATE_LABEL] - max_log)
         return phishing_score / (phishing_score + legitimate_score)
 
-    def _predict_with_url_model(self, url: str, features) -> float | None:
+    def _predict_with_url_model(self, url: str, features: UrlFeatures) -> float | None:
         model = self._url_model()
         if model is None:
             return None
         kaggle_features = to_kaggle_features(url, features)
         return self._predict_with_categorical_model(model, kaggle_features)
 
-    def _predict_with_deep_learning_model(self, url: str, features) -> float | None:
+    def _predict_with_deep_learning_model(self, url: str, features: UrlFeatures) -> float | None:
         if self.deep_learning_artifact is None:
             return None
         pipeline = self.deep_learning_artifact.get("pipeline")
@@ -135,6 +137,31 @@ class PhishingDetector:
         if positive_class not in classes:
             return None
         return float(probabilities[classes.index(positive_class)])
+
+    def _choose_prediction_source(
+        self,
+        heuristic_probability: float,
+        deep_learning_probability: float | None,
+        url_probability: float | None,
+        html_probability: float | None,
+    ) -> tuple[float, str]:
+        probabilities = [heuristic_probability]
+        if deep_learning_probability is not None:
+            probabilities.append(deep_learning_probability)
+        if url_probability is not None:
+            probabilities.append(url_probability)
+        if html_probability is not None:
+            probabilities.append(html_probability)
+
+        if deep_learning_probability is not None and html_probability is not None:
+            return max(probabilities), "sklearn_mlp_deep_learning_url_html_ensemble"
+        if deep_learning_probability is not None:
+            return max(heuristic_probability, deep_learning_probability), "sklearn_mlp_deep_learning_url_features"
+        if url_probability is None and html_probability is None:
+            return heuristic_probability, "heuristic_url_rules"
+        if html_probability is None:
+            return max(probabilities), "kaggle_naive_bayes_with_url_features"
+        return max(probabilities), "url_html_ensemble"
 
     def _predict_with_html_model(self, html: str | None, url: str) -> tuple[float | None, dict | None]:
         if not html:
@@ -169,29 +196,12 @@ class PhishingDetector:
         url_probability = self._predict_with_url_model(url, features)
         html_probability, html_features = self._predict_with_html_model(html, url)
 
-        probabilities = [heuristic_probability]
-        if deep_learning_probability is not None:
-            probabilities.append(deep_learning_probability)
-        if url_probability is not None:
-            probabilities.append(url_probability)
-        if html_probability is not None:
-            probabilities.append(html_probability)
-
-        if deep_learning_probability is not None and html_probability is not None:
-            phishing_probability = max(probabilities)
-            model_source = "sklearn_mlp_deep_learning_url_html_ensemble"
-        elif deep_learning_probability is not None:
-            phishing_probability = max(heuristic_probability, deep_learning_probability)
-            model_source = "sklearn_mlp_deep_learning_url_features"
-        elif url_probability is None and html_probability is None:
-            phishing_probability = heuristic_probability
-            model_source = "heuristic_url_rules"
-        elif html_probability is None:
-            phishing_probability = max(probabilities)
-            model_source = "kaggle_naive_bayes_with_url_features"
-        else:
-            phishing_probability = max(probabilities)
-            model_source = "url_html_ensemble"
+        phishing_probability, model_source = self._choose_prediction_source(
+            heuristic_probability=heuristic_probability,
+            deep_learning_probability=deep_learning_probability,
+            url_probability=url_probability,
+            html_probability=html_probability,
+        )
         label = "phishing" if phishing_probability >= self.threshold else "legitimate"
         confidence = phishing_probability if label == "phishing" else 1.0 - phishing_probability
 

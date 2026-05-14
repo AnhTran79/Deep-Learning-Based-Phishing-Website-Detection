@@ -88,6 +88,59 @@ function buildExplanation(data) {
   return "Mo hinh phan loai legitimate vi chua thay cac dau hieu rui ro manh trong URL va HTML.";
 }
 
+function clearChildren(element) {
+  while (element.firstChild) {
+    element.removeChild(element.firstChild);
+  }
+}
+
+function renderRiskFactors(rows) {
+  clearChildren(riskFactors);
+  rows.forEach(([feature, status, risk]) => {
+    const row = document.createElement("tr");
+    const featureCell = document.createElement("td");
+    const statusCell = document.createElement("td");
+    const riskCell = document.createElement("td");
+    const riskBadge = document.createElement("span");
+
+    featureCell.textContent = feature;
+    statusCell.textContent = status;
+    riskBadge.className = `risk ${risk.toLowerCase()}`;
+    riskBadge.textContent = risk;
+    riskCell.appendChild(riskBadge);
+    row.append(featureCell, statusCell, riskCell);
+    riskFactors.appendChild(row);
+  });
+}
+
+function renderFeatureCards(data) {
+  clearChildren(features);
+
+  visibleFeatures.forEach(([key, title]) => {
+    features.appendChild(createFeatureCard(title, data.features[key]));
+  });
+
+  if (data.html_features) {
+    Object.entries(data.html_features)
+      .slice(0, 8)
+      .forEach(([key, value]) => {
+        features.appendChild(createFeatureCard(key, value));
+      });
+  }
+}
+
+function createFeatureCard(title, value) {
+  const card = document.createElement("article");
+  const label = document.createElement("span");
+  const strong = document.createElement("strong");
+
+  card.className = "feature";
+  label.textContent = title;
+  strong.textContent = value ?? "";
+  card.append(label, strong);
+  return card;
+}
+
 function showError(message) {
   result.classList.remove("hidden", "phishing", "legitimate");
   result.classList.add("phishing");
@@ -135,29 +188,10 @@ form.addEventListener("submit", async (event) => {
       : `HTML fetch failed: ${data.html_fetch?.error || "unknown error"}`;
 
     explanationText.textContent = buildExplanation(data);
-    riskFactors.innerHTML = buildRiskFactors(data)
-      .map(
-        ([feature, status, risk]) =>
-          `<tr><td>${feature}</td><td>${status}</td><td><span class="risk ${risk.toLowerCase()}">${risk}</span></td></tr>`,
-      )
-      .join("");
+    renderRiskFactors(buildRiskFactors(data));
     explanation.classList.remove("hidden");
 
-    const urlFeatureCards = visibleFeatures
-      .map(([key, title]) => {
-        const value = data.features[key];
-        return `<article class="feature"><span>${title}</span><strong>${value}</strong></article>`;
-      })
-      .join("");
-
-    const htmlFeatureCards = data.html_features
-      ? Object.entries(data.html_features)
-          .slice(0, 8)
-          .map(([key, value]) => `<article class="feature"><span>${key}</span><strong>${value}</strong></article>`)
-          .join("")
-      : "";
-
-    features.innerHTML = urlFeatureCards + htmlFeatureCards;
+    renderFeatureCards(data);
     features.classList.remove("hidden");
   } catch (error) {
     showError(error.message || "Khong the phan tich URL nay.");
