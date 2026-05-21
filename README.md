@@ -1,110 +1,126 @@
-# Phishing Website Detection Demo
+# Phishing Website Detection API
 
-Demo localhost cho de tai "Deep Learning-Based Phishing Website Detection".
+Project demo phat hien phishing website tu dataset raw URL dang `url,label`.
 
-Project nay duoc trinh bay theo style project cu:
+## Thanh phan
 
-- `app.py`: entrypoint chay web localhost.
-- `app/`: FastAPI backend va URL feature extractor.
-- `app/static/`: giao dien web.
-- `artifacts/`: model artifact da train.
-- `train_model.py`: train model tu dataset Kaggle hoac dataset URL dang `url,label`.
+- `app.py`: entrypoint chay FastAPI server.
+- `app/main.py`: API endpoints.
+- `app/features.py`: trich xuat URL lexical features va HTML features.
+- `app/model.py`: runtime detector, load CNN URL model va MLP URL/HTML model.
+- `train_model.py`: train lai model tu `../balanced_dataset.csv`.
+- `artifacts/`: model artifact, metrics va report.
+- `dataset/`: train/test split va HTML cache neu bat fetch.
 
-## 1. Cai dat
+## Dataset moi
+
+Dataset mac dinh:
+
+```text
+../balanced_dataset.csv
+```
+
+Schema:
+
+```text
+url,label
+example.com,0
+bad.example/login,1
+```
+
+Label:
+
+- `0`: legitimate
+- `1`: phishing
+
+Project chi dung dataset raw URL nay lam nguon train chinh.
+
+## Cai dat
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Neu may da cai Python 3.12 va package truc tiep, co the chay thang bang:
+## Train model tu balanced_dataset.csv
 
-```bash
-python app.py
-```
-
-## 2. Train model tu dataset Kaggle
-
-Dataset dang dung:
-
-```text
-https://www.kaggle.com/datasets/akashkr/phishing-website-dataset
-```
-
-Train lai artifact:
+Train nhanh tren URL text va URL/HTML feature vector khong fetch HTML live:
 
 ```bash
 python train_model.py
 ```
 
-Lenh tren se train ca:
+Mac dinh training hien tai:
 
-- `MLPClassifier` deep learning model tren cac URL feature cua Kaggle.
-- Naive Bayes artifact cu de lam fallback.
+- `--epochs 10`
+- `--threshold 0.4`
 
-Train chung dataset URL voi bo HTML snapshot moi:
+Lenh tren train:
 
-```bash
-python train_model.py --html-archive "C:\Users\ADMIN\Downloads\archive.zip"
-```
+- `url_cnn_deep_learning`: CNN character-level hoc truc tiep chuoi URL.
+- `deep_learning_url_html_mlp`: MLP hoc URL lexical features va HTML features.
+- `baseline_logistic_regression`: baseline tuyen tinh de so sanh.
+- `baseline_gaussian_naive_bayes`: baseline xac suat don gian de so sanh.
 
-Sinh ra:
+Output chinh:
 
-- `artifacts/best_model.json`
+- `artifacts/url_cnn.pt`
 - `artifacts/deep_learning_model.joblib`
+- `artifacts/best_model.json`
 - `artifacts/classification_report.txt`
 - `artifacts/model_results.csv`
 - `artifacts/deep_learning_metrics.json`
 - `artifacts/metadata.json`
 - `dataset/train.csv`
-- `dataset/valid.csv`
 - `dataset/test.csv`
-- `dataset/features.csv`
-- `dataset/dataset_summary.json`
-- `dataset/configs.json`
-- `chart/confusion_matrix.png`
-- `chart/model_comparison.png`
-- `chart/cls_metrics.png`
-- `chart/cls_feature_importance.png`
 
-Artifact moi gom:
+## Train co doc HTML
 
-- `deep_learning_model`: neural network MLP duoc train bang `scikit-learn`.
-- `url_model`: train tu file URL-feature `dataset.csv`.
-- `html_model`: train tu cac file HTML trong `archive.zip` theo nhan `Phish` va `NotPhish`.
-- `training_summary`: tom tat so mau, so feature va cach artifact duoc sinh ra.
-
-File `classification_report.txt` co dang bang `precision`, `recall`, `f1-score`, `support`
-de dua vao slide/bao cao nhu muc "Trained Model Results".
-
-Neu chi muon train artifact Naive Bayes cu:
+Doc HTML live rat cham voi dataset 485k URL va nhieu link co the chet. Nen train theo tung dot va dung cache:
 
 ```bash
-python train_model.py --skip-deep-learning
+python train_model.py --fetch-html --html-cache-dir dataset/html_cache --html-max-rows 5000
 ```
 
-Luu y: `best_model.json` la artifact do `train_model.py` tao tu du lieu train, khong phai
-file con nguoi tu dien xac suat bang tay. Khi co `deep_learning_model.joblib`, backend se uu tien
-model MLP deep learning; neu file nay chua co thi se fallback ve Naive Bayes va heuristic.
+Sau khi cache da co, co the tang `--html-max-rows` hoac bo gioi han:
 
-## 3. Chay web localhost
+```bash
+python train_model.py --fetch-html --html-cache-dir dataset/html_cache --html-max-rows 0
+```
+
+Neu can test pipeline truoc:
+
+```bash
+python train_model.py --max-rows 20000 --epochs 2 --html-max-rows 1000 --fetch-html
+```
+
+## Chay API
 
 ```bash
 python app.py
 ```
 
-Mo trinh duyet tai:
+Server mac dinh:
 
 ```text
 http://127.0.0.1:8000
 ```
 
-Hoac chay truc tiep voi Uvicorn:
+Runtime mac dinh se thu fetch HTML cua URL can kiem tra. Tat fetch HTML runtime bang:
 
 ```bash
-uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+set FETCH_HTML_AT_RUNTIME=0
+python app.py
 ```
 
-## 4. API
+## API
+
+Health check:
+
+```bash
+curl http://127.0.0.1:8000/api/health
+```
+
+Predict:
 
 ```bash
 curl -X POST http://127.0.0.1:8000/api/predict ^
@@ -115,42 +131,9 @@ curl -X POST http://127.0.0.1:8000/api/predict ^
 Response gom:
 
 - `label`: `phishing` hoac `legitimate`
-- `confidence`: do tin cay cua nhan tra ve
-- `phishing_probability`: xac suat phishing
-- `model_source`: model dang duoc dung
-- `features`: cac feature URL trich xuat duoc
-- `html_fetch`: trang HTML co tai duoc hay khong
-- `html_features`: cac feature HTML neu backend tai duoc noi dung trang
-
-## 5. Luu y hoc thuat
-
-Dataset Kaggle hien tai khong co URL goc. Dataset chi co cac feature da trich xuat san va cot `Result`.
-
-Vi vay demo runtime se:
-
-- trich xuat cac tin hieu co the suy ra tu URL nguoi dung nhap;
-- map chung sang schema feature cua Kaggle;
-- uu tien du doan bang MLP deep learning model neu da train;
-- tu dong tai HTML cua URL nguoi dung nhap de trich xuat tin hieu content neu trang cho phep truy cap;
-- gan gia tri trung lap `0` cho cac feature can WHOIS, DNS hoac search-engine check.
-
-Bo HTML snapshot moi giup bo sung cac tin hieu content nhu form, input password, iframe,
-meta refresh, script, link ngoai va tu khoa dang ngo. Khi backend khong tai duoc HTML vi timeout,
-chan bot, loi SSL hoac trang khong phan hoi, demo van du doan bang URL model va heuristic nhu cu.
-
-Mot nhom phishing thuc te thuong dat tren nen tang hop phap nhu Wix, Netlify, Vercel,
-GitHub Pages hoac Google Sites. Vi URL/HTML tinh cua cac trang nay co the nhin kha binh
-thuong, runtime heuristic co them tin hieu `has_public_hosting_platform` ket hop voi
-`has_brand_impersonation` de bat cac URL gia mao brand/crypto tren public hosting.
-
-`train_model.py` cung co che do train CNN char-level cho dataset URL goc dang:
-
-```text
-url,label
-```
-
-Chay bang:
-
-```bash
-python train_model.py --task url-cnn --data "C:\Users\ADMIN\Downloads\urls.csv"
-```
+- `confidence`
+- `phishing_probability`
+- `model_source`
+- `features`: URL + HTML features
+- `component_probabilities`: CNN, MLP, heuristic probabilities
+- `html_fetch`: trang HTML co fetch duoc hay khong

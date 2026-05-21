@@ -1,50 +1,87 @@
-# Model comparison plan
+# Model comparison
 
-File `train_model.py` hien tai dung 4 model de so sanh:
+File `train_model.py` hien tai so sanh 4 model:
 
-| Nhom | Model | Cong dung |
+| Nhom | Model | Muc dich |
 | --- | --- | --- |
-| Baseline | `baseline_logistic_regression` | Mo hinh tuyen tinh de kiem tra dataset co the tach phishing/legitimate bang quan he don gian hay khong. Day la baseline de so sanh toc do, do on dinh va do de giai thich. |
-| Baseline | `baseline_gaussian_naive_bayes` | Mo hinh xac suat don gian, gia dinh cac feature doc lap tuong doi. Dung lam moc so sanh toi thieu vi train nhanh va de trien khai. |
-| Deep learning | `deep_learning_mlp_small` | Mang neural network MLP nho voi hidden layers `(64, 32)`. Dung de hoc quan he phi tuyen giua cac feature URL. |
-| Deep learning | `deep_learning_mlp_deep` | Mang neural network MLP sau hon voi hidden layers `(128, 64, 32)`. Dung de kiem tra model phuc tap hon co cai thien F1/accuracy so voi MLP nho va baseline hay khong. |
+| Baseline | `baseline_logistic_regression` | Moc so sanh tuyen tinh tren URL/HTML feature vector. |
+| Baseline | `baseline_gaussian_naive_bayes` | Moc so sanh xac suat don gian, train nhanh, gia dinh feature gan doc lap. |
+| Deep learning | `url_cnn_deep_learning` | CNN character-level hoc truc tiep chuoi URL. |
+| Deep learning | `deep_learning_url_html_mlp` | MLP hoc quan he phi tuyen tu URL/HTML feature vector. |
 
-## Baseline dung de lam gi?
+## Ket qua test set hien tai
 
-Baseline khong phai de bo qua. Baseline la moc so sanh bat buoc:
+Dataset: `balanced_dataset.csv`  
+Test rows: `97,125`
+Threshold: `0.4`
+URL CNN best epoch: `9`
 
-- Neu baseline da dat ket qua gan bang deep learning, ta biet bai toan co the duoc giai bang model don gian.
-- Neu deep learning tot hon baseline tren validation/test set, ta co co so de noi rang deep learning hoc duoc quan he phuc tap hon trong du lieu.
-- Baseline giup tranh viec chon deep learning chi vi ten nghe manh hon, trong khi thuc te co the khong can thiet.
+| Model | Family | Accuracy | Precision | Recall | F1 | ROC-AUC |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| `url_cnn_deep_learning` | Deep learning | 0.9790 | 0.9757 | 0.9776 | 0.9767 | 0.9974 |
+| `deep_learning_url_html_mlp` | Deep learning | 0.9192 | 0.9274 | 0.8902 | 0.9084 | 0.9720 |
+| `baseline_logistic_regression` | Baseline | 0.8390 | 0.8665 | 0.7591 | 0.8093 | 0.9107 |
+| `baseline_gaussian_naive_bayes` | Baseline | 0.8237 | 0.9763 | 0.6233 | 0.7608 | 0.8735 |
 
-## Tai sao khong chi dung baseline?
+## Chart
 
-Baseline co uu diem la nhanh, de giai thich va it ton tai nguyen. Tuy nhien phishing URL thuong co nhieu tin hieu ket hop voi nhau, vi du:
+Da sinh chart so sanh:
 
-- URL dai, nhieu ky tu dac biet, nhieu chu so.
-- Co tu khoa dang nghi nhu `login`, `verify`, `wallet`, `secure`.
-- Co redirect parameter hoac embedded URL.
-- Gia mao brand tren public hosting nhu GitHub Pages, Vercel, Netlify, Google Sites.
+- `chart/model_comparison.png`: so sanh Accuracy, Precision, Recall, F1, ROC-AUC.
+- `chart/model_comparison_f1.png`: so sanh rieng Test F1.
 
-Cac quan he nay thuong khong hoan toan tuyen tinh. Logistic Regression co the bo sot cac tuong tac phuc tap giua feature. Gaussian Naive Bayes lai gia dinh feature doc lap, trong khi cac feature URL thuong lien quan nhau. MLP co the hoc cac quan he phi tuyen va cach nhieu feature cung xuat hien de tao thanh rui ro phishing.
+## Nhan xet
 
-Vi vay, deep learning nen duoc chon khi ket qua validation/test, dac biet la `F1-score` cua class phishing, tot hon baseline hoac on dinh hon baseline. Neu baseline tot ngang hoac tot hon, nen bao cao trung thuc rang baseline la lua chon don gian va hop ly hon.
+`url_cnn_deep_learning` la model tot nhat hien tai. Model nay hoc truc tiep pattern trong chuoi URL nen bat duoc nhieu tin hieu ma feature thu cong co the bo sot.
 
-## Tieu chi so sanh
+`deep_learning_url_html_mlp` tot hon ca hai baseline tren Accuracy, Recall, F1 va ROC-AUC. Dieu nay cho thay MLP hoc duoc quan he phi tuyen giua cac URL features tot hon model tuyen tinh va Naive Bayes.
 
-Sau khi train, xem cac file:
+`baseline_logistic_regression` co Precision cao nhung Recall thap hon deep learning, nghia la khi no bao phishing thi kha chac, nhung bo sot nhieu URL phishing hon.
 
-- `artifacts/model_results.csv`: bang so sanh 4 model.
-- `artifacts/deep_learning_metrics.json`: metrics chi tiet va confusion matrix.
-- `artifacts/classification_report.txt`: precision, recall, F1-score cua model deep learning duoc chon cho runtime.
-- `chart/model_comparison.png`: bieu do so sanh validation/test F1.
+`baseline_gaussian_naive_bayes` co Precision rat cao nhung Recall thap nhat. Model nay qua than trong voi class phishing, nen khong phu hop lam runtime chinh trong bai toan can bat phishing.
 
-Nen uu tien `F1-score` hon accuracy, vi phishing detection can can bang giua:
+## Ket luan
 
-- `precision`: du doan phishing co dung khong.
-- `recall`: bat duoc bao nhieu URL phishing that.
+Project co 2 baseline dung de so sanh va 2 model deep learning. Runtime van uu tien 2 model deep learning:
 
-## Ket luan de tra loi bao cao
+- `url_cnn_deep_learning`
+- `deep_learning_url_html_mlp`
 
-Project khong bo baseline. Project train baseline de lam moc so sanh, sau do dung deep learning neu MLP cho ket qua tot hon tren validation/test set. Ly do dung deep learning la MLP co kha nang hoc quan he phi tuyen va tuong tac giua cac feature URL, phu hop hon voi phishing website detection so voi cac baseline don gian.
+Hai baseline chi dung cho bao cao va danh gia, khong dung lam model runtime chinh.
 
+## Tai sao dung deep learning?
+
+Project dung deep learning vi dataset hien tai la raw URL, khong phai chi la bang feature co san. URL la du lieu dang chuoi, trong do thu tu ky tu, cau truc domain, path, query string, token dai, tu khoa va cach cac thanh phan xuat hien lien tiep nhau deu co y nghia. `url_cnn_deep_learning` co the hoc truc tiep cac pattern nay tu chuoi URL.
+
+Ket qua test set cho thay ly do nay ro rang:
+
+| Model | F1 | Recall | ROC-AUC |
+| --- | ---: | ---: | ---: |
+| `url_cnn_deep_learning` | 0.9767 | 0.9776 | 0.9974 |
+| `deep_learning_url_html_mlp` | 0.9084 | 0.8902 | 0.9720 |
+| `baseline_logistic_regression` | 0.8093 | 0.7591 | 0.9107 |
+| `baseline_gaussian_naive_bayes` | 0.7608 | 0.6233 | 0.8735 |
+
+Trong bai toan phishing detection, `Recall` cua class phishing rat quan trong vi bo sot phishing la loi nguy hiem. CNN dat Recall `0.9776`, cao hon Logistic Regression `0.7591` va Gaussian Naive Bayes `0.6233`. Nghia la deep learning bat duoc nhieu URL phishing hon rat nhieu.
+
+## Tai sao khong dung cac model machine learning khac lam chinh?
+
+Khong phai project bo qua machine learning truyen thong. Project van train baseline de so sanh. Tuy nhien, ket qua hien tai cho thay baseline kem hon deep learning tren cac metric quan trong.
+
+`baseline_logistic_regression` la model tuyen tinh. No chi hoc duoc quan he gan tuyen tinh giua feature va label. URL phishing thuong khong don gian nhu "co mot feature thi la phishing"; no thuong la su ket hop cua nhieu dau hieu: domain la, path dai, token dai, tu khoa login/verify, shortener, redirect parameter, entropy cao. Cac tuong tac nay phi tuyen, nen Logistic Regression co Precision `0.8665` va Recall `0.7591`, van bo sot nhieu phishing hon deep learning.
+
+`baseline_gaussian_naive_bayes` gia dinh cac feature doc lap tuong doi. Gia dinh nay khong phu hop voi URL, vi cac feature URL thuong lien quan nhau: URL dai thuong di kem nhieu ky tu dac biet, query dai, token dai, entropy cao. Ket qua la Naive Bayes co Precision `0.9763` nhung Recall chi `0.6233`, nghia la model rat than trong: khi bao phishing thi dung nhieu, nhung bo sot qua nhieu phishing.
+
+Vi vay, cac model machine learning truyen thong van huu ich de lam moc so sanh, nhung khong phu hop lam runtime chinh khi muc tieu la bat phishing voi Recall va F1 cao.
+
+## Khac biet giua deep learning va machine learning trong project nay
+
+| Diem khac biet | Baseline machine learning | Deep learning |
+| --- | --- | --- |
+| Du lieu hoc | Hoc tu feature da trich xuat thu cong. | CNN hoc truc tiep tu chuoi URL; MLP hoc quan he phi tuyen tu feature. |
+| Kha nang hoc pattern | Tot voi quan he don gian. | Tot hon voi pattern phuc tap, thu tu ky tu va tuong tac feature. |
+| Feature engineering | Phu thuoc nhieu vao feature minh tao san. | CNN tu hoc representation tu URL text. |
+| Recall phishing hien tai | Thap hon: `0.7591` va `0.6233`. | Cao hon: CNN dat `0.9776`. |
+| Vai tro trong project | Moc so sanh, giai thich baseline. | Runtime chinh. |
+
+Noi ngan gon: baseline machine learning doc cac feature minh dua vao va hoc quy tac don gian hon; deep learning, dac biet la CNN, hoc truc tiep pattern trong chuoi URL nen phu hop hon voi dataset raw URL hien tai.

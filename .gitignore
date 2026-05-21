@@ -9,3 +9,4 @@ artifacts/*.pkl
 chart/
 dataset/*.csv
 dataset/*.jsonl
+dataset/html_cache/

@@ -1,49 +1,66 @@
 from __future__ import annotations
 
 import json
-import math
+import os
 from pathlib import Path
 
 try:
     import joblib
-except ModuleNotFoundError:  # pragma: no cover - allows heuristic fallback without scikit-learn.
+except ModuleNotFoundError:  # pragma: no cover
     joblib = None
 
 try:
     import torch
     from torch import nn
-except ModuleNotFoundError:  # pragma: no cover - allows the demo API to run before installing torch.
+except ModuleNotFoundError:  # pragma: no cover
     torch = None
     nn = None
 
-from app.features import UrlFeatures, extract_html_features, extract_url_features, heuristic_phishing_score, to_kaggle_features
+from app.features import (
+    COMBINED_FEATURE_NAMES,
+    extract_html_features,
+    extract_url_features,
+    fetch_html,
+    heuristic_phishing_score,
+    normalize_url,
+)
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-MODEL_PATH = PROJECT_ROOT / "artifacts" / "best_model.json"
-DEEP_MODEL_PATH = PROJECT_ROOT / "artifacts" / "deep_learning_model.joblib"
-PHISHING_LABEL = "-1"
-LEGITIMATE_LABEL = "1"
+ARTIFACT_PATH = PROJECT_ROOT / "artifacts" / "best_model.json"
+TABULAR_MODEL_PATH = PROJECT_ROOT / "artifacts" / "deep_learning_model.joblib"
+URL_CNN_PATH = PROJECT_ROOT / "artifacts" / "url_cnn.pt"
+
+URL_CNN_MAX_LEN = 200
+URL_CNN_VOCAB_SIZE = 128
+
+
+def encode_url(url: str) -> list[int]:
+    normalized = normalize_url(url)
+    ids = [min(ord(char), URL_CNN_VOCAB_SIZE - 1) for char in normalized[:URL_CNN_MAX_LEN]]
+    return ids + [0] * (URL_CNN_MAX_LEN - len(ids))
 
 
 if nn is not None:
 
     class CharCnnUrlClassifier(nn.Module):
-        """Skeleton model for thesis implementation."""
-
-        def __init__(self, vocab_size: int = 128, embedding_dim: int = 32) -> None:
+        def __init__(self, vocab_size: int = URL_CNN_VOCAB_SIZE, embedding_dim: int = 32) -> None:
             super().__init__()
             self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=0)
             self.encoder = nn.Sequential(
                 nn.Conv1d(embedding_dim, 64, kernel_size=5, padding=2),
                 nn.ReLU(),
+                nn.BatchNorm1d(64),
+                nn.Conv1d(64, 128, kernel_size=5, padding=2),
+                nn.ReLU(),
                 nn.AdaptiveMaxPool1d(1),
             )
             self.classifier = nn.Sequential(
                 nn.Flatten(),
-                nn.Linear(64, 32),
+                nn.Linear(128, 64),
                 nn.ReLU(),
-                nn.Dropout(0.2),
-                nn.Linear(32, 1),
+                nn.Dropout(0.25),
+                nn.Linear(64, 1),
             )
 
         def forward(self, token_ids: torch.Tensor) -> torch.Tensor:
@@ -59,168 +76,106 @@ else:
 
 
 class PhishingDetector:
-    threshold = 0.35
+    threshold = 0.40
 
     def __init__(self) -> None:
-        self.model = None
-        self.artifact = self._load_artifact()
-        self.deep_learning_artifact = self._load_deep_learning_artifact()
-        if torch is not None:
-            self.model = CharCnnUrlClassifier()
-            self.model.eval()
+        self.artifact = self._load_json_artifact()
+        self.tabular_artifact = self._load_tabular_artifact()
+        self.url_cnn = self._load_url_cnn()
+        self.fetch_html_at_runtime = os.environ.get("FETCH_HTML_AT_RUNTIME", "1") != "0"
+        self.html_timeout = float(os.environ.get("HTML_FETCH_TIMEOUT", "4"))
 
-    def _load_artifact(self) -> dict | None:
-        if not MODEL_PATH.exists():
+    def _load_json_artifact(self) -> dict | None:
+        if not ARTIFACT_PATH.exists():
             return None
-        return json.loads(MODEL_PATH.read_text(encoding="utf-8"))
+        return json.loads(ARTIFACT_PATH.read_text(encoding="utf-8"))
 
-    def _load_deep_learning_artifact(self) -> dict | None:
-        if joblib is None or not DEEP_MODEL_PATH.exists():
+    def _load_tabular_artifact(self) -> dict | None:
+        if joblib is None or not TABULAR_MODEL_PATH.exists():
             return None
-        return joblib.load(DEEP_MODEL_PATH)
-
-    def _url_model(self) -> dict | None:
-        if self.artifact is None:
+        artifact = joblib.load(TABULAR_MODEL_PATH)
+        if artifact.get("model_type") != "sklearn_mlp_url_html_features":
             return None
-        if "url_model" in self.artifact:
-            return self.artifact["url_model"]
-        if self.artifact.get("model_type") == "categorical_naive_bayes":
-            return self.artifact
-        return None
+        return artifact
 
-    def _html_model(self) -> dict | None:
-        if self.artifact is None:
+    def _load_url_cnn(self):
+        if torch is None or not URL_CNN_PATH.exists():
             return None
-        return self.artifact.get("html_model")
+        model = CharCnnUrlClassifier(vocab_size=URL_CNN_VOCAB_SIZE)
+        state = torch.load(URL_CNN_PATH, map_location="cpu", weights_only=True)
+        model.load_state_dict(state["model_state_dict"] if isinstance(state, dict) and "model_state_dict" in state else state)
+        model.eval()
+        return model
 
-    def _predict_with_categorical_model(self, model: dict, feature_values: dict[str, int]) -> float:
-        log_scores = dict(model["priors"])
-        for label in (PHISHING_LABEL, LEGITIMATE_LABEL):
-            for name in model["feature_names"]:
-                value = str(feature_values[name])
-                likelihood = model["likelihoods"][label][name]
-                if value in likelihood:
-                    log_scores[label] += likelihood[value]
-                else:
-                    log_scores[label] += likelihood.get("__UNK__", min(likelihood.values()))
-
-        max_log = max(log_scores.values())
-        phishing_score = math.exp(log_scores[PHISHING_LABEL] - max_log)
-        legitimate_score = math.exp(log_scores[LEGITIMATE_LABEL] - max_log)
-        return phishing_score / (phishing_score + legitimate_score)
-
-    def _predict_with_url_model(self, url: str, features: UrlFeatures) -> float | None:
-        model = self._url_model()
-        if model is None:
+    def _predict_with_url_cnn(self, url: str) -> float | None:
+        if torch is None or self.url_cnn is None:
             return None
-        kaggle_features = to_kaggle_features(url, features)
-        return self._predict_with_categorical_model(model, kaggle_features)
+        token_ids = torch.tensor([encode_url(url)], dtype=torch.long)
+        with torch.no_grad():
+            logits = self.url_cnn(token_ids)
+            return float(torch.sigmoid(logits)[0].item())
 
-    def _predict_with_deep_learning_model(self, url: str, features: UrlFeatures) -> float | None:
-        if self.deep_learning_artifact is None:
+    def _predict_with_tabular_model(self, feature_values: dict[str, int | float]) -> float | None:
+        if self.tabular_artifact is None:
             return None
-        pipeline = self.deep_learning_artifact.get("pipeline")
-        feature_names = self.deep_learning_artifact.get("feature_names") or []
-        if pipeline is None or not feature_names:
+        pipeline = self.tabular_artifact.get("pipeline")
+        feature_names = self.tabular_artifact.get("feature_names") or COMBINED_FEATURE_NAMES
+        if pipeline is None or not hasattr(pipeline, "predict_proba"):
             return None
-
-        kaggle_features = to_kaggle_features(url, features)
-        vector = [[kaggle_features[name] for name in feature_names]]
-        if not hasattr(pipeline, "predict_proba"):
-            return None
-
+        vector = [[float(feature_values.get(name, 0.0)) for name in feature_names]]
         probabilities = pipeline.predict_proba(vector)[0]
         classes = list(getattr(pipeline, "classes_", []))
         if not classes and hasattr(pipeline, "steps"):
             classes = list(getattr(pipeline.steps[-1][1], "classes_", []))
-        positive_class = self.deep_learning_artifact.get("positive_class", 1)
-        if positive_class not in classes:
+        if 1 not in classes:
             return None
-        return float(probabilities[classes.index(positive_class)])
+        return float(probabilities[classes.index(1)])
 
-    def _choose_prediction_source(
+    def _combine_probabilities(
         self,
         heuristic_probability: float,
-        deep_learning_probability: float | None,
-        url_probability: float | None,
-        html_probability: float | None,
+        cnn_probability: float | None,
+        tabular_probability: float | None,
     ) -> tuple[float, str]:
-        probabilities = [heuristic_probability]
-        if deep_learning_probability is not None:
-            probabilities.append(deep_learning_probability)
-        if url_probability is not None:
-            probabilities.append(url_probability)
-        if html_probability is not None:
-            probabilities.append(html_probability)
+        if cnn_probability is not None and tabular_probability is not None:
+            return (cnn_probability * 0.65) + (tabular_probability * 0.35), "url_cnn_plus_url_html_mlp"
+        if cnn_probability is not None:
+            return cnn_probability, "url_cnn_deep_learning"
+        if tabular_probability is not None:
+            return max(tabular_probability, heuristic_probability), "url_html_mlp_deep_learning"
+        return heuristic_probability, "heuristic_url_html_rules"
 
-        if deep_learning_probability is not None and html_probability is not None:
-            return max(probabilities), "sklearn_mlp_deep_learning_url_html_ensemble"
-        if deep_learning_probability is not None:
-            return max(heuristic_probability, deep_learning_probability), "sklearn_mlp_deep_learning_url_features"
-        if url_probability is None and html_probability is None:
-            return heuristic_probability, "heuristic_url_rules"
-        if html_probability is None:
-            return max(probabilities), "kaggle_naive_bayes_with_url_features"
-        return max(probabilities), "url_html_ensemble"
-
-    def _predict_with_html_model(self, html: str | None, url: str) -> tuple[float | None, dict | None]:
-        if not html:
-            return None, None
-        model = self._html_model()
-        if model is None:
-            return None, None
+    def predict(self, url: str) -> dict:
+        html = fetch_html(url, timeout=self.html_timeout) if self.fetch_html_at_runtime else None
+        url_features = extract_url_features(url)
         html_features = extract_html_features(html, base_url=url)
-        feature_values = html_features.to_dict()
-        probability = self._predict_with_categorical_model(model, feature_values)
-        active_content_signals = (
-            feature_values["form_count_bucket"]
-            + feature_values["has_password_input"]
-            + feature_values["has_email_input"]
-            + feature_values["has_iframe"]
-            + feature_values["has_meta_refresh"]
-            + feature_values["blocks_right_click"]
-            + feature_values["has_popup"]
-            + feature_values["has_empty_form_action"]
-            + feature_values["has_javascript_form_action"]
-            + feature_values["has_external_form_action"]
-        )
-        if active_content_signals == 0:
-            probability = min(probability, 0.25)
-        return probability, feature_values
+        feature_values = {**url_features.to_dict(), **html_features.to_dict()}
 
-    def predict(self, url: str, html: str | None = None) -> dict:
-        features = extract_url_features(url)
-
-        heuristic_probability = heuristic_phishing_score(features)
-        deep_learning_probability = self._predict_with_deep_learning_model(url, features)
-        url_probability = self._predict_with_url_model(url, features)
-        html_probability, html_features = self._predict_with_html_model(html, url)
-
-        phishing_probability, model_source = self._choose_prediction_source(
+        heuristic_probability = heuristic_phishing_score(url_features, html_features)
+        cnn_probability = self._predict_with_url_cnn(url)
+        tabular_probability = self._predict_with_tabular_model(feature_values)
+        phishing_probability, model_source = self._combine_probabilities(
             heuristic_probability=heuristic_probability,
-            deep_learning_probability=deep_learning_probability,
-            url_probability=url_probability,
-            html_probability=html_probability,
+            cnn_probability=cnn_probability,
+            tabular_probability=tabular_probability,
         )
+
         label = "phishing" if phishing_probability >= self.threshold else "legitimate"
         confidence = phishing_probability if label == "phishing" else 1.0 - phishing_probability
-
-        result = {
+        return {
             "url": url,
             "label": label,
             "confidence": round(confidence, 4),
             "phishing_probability": round(phishing_probability, 4),
             "model_source": model_source,
-            "features": features.to_dict(),
+            "features": feature_values,
+            "component_probabilities": {
+                "heuristic_url_html_rules": round(heuristic_probability, 4),
+                "url_cnn_deep_learning": round(cnn_probability, 4) if cnn_probability is not None else None,
+                "url_html_mlp_deep_learning": round(tabular_probability, 4) if tabular_probability is not None else None,
+            },
+            "html_fetch": {
+                "enabled": self.fetch_html_at_runtime,
+                "available": bool(html_features.html_available),
+            },
         }
-        if html_features is not None:
-            result["html_features"] = html_features
-            result["component_probabilities"] = {
-                "heuristic_url_rules": round(heuristic_probability, 4),
-                "deep_learning_url_model": round(deep_learning_probability, 4)
-                if deep_learning_probability is not None
-                else None,
-                "url_model": round(url_probability, 4) if url_probability is not None else None,
-                "html_model": round(html_probability, 4) if html_probability is not None else None,
-            }
-        return result

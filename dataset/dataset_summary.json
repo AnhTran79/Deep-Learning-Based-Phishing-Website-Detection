@@ -1,57 +1,24 @@
 {
-  "total_rows": 11055,
-  "train_rows": 7185,
-  "valid_rows": 1658,
-  "test_rows": 2212,
+  "total_rows": 485624,
+  "train_rows": 388499,
+  "test_rows": 97125,
   "class_counts": {
     "all": {
-      "phishing": 4898,
-      "legitimate": 6157
+      "legitimate": 267093,
+      "phishing": 218531
     },
     "train": {
-      "phishing": 3183,
-      "legitimate": 4002
-    },
-    "valid": {
-      "legitimate": 923,
-      "phishing": 735
+      "legitimate": 213674,
+      "phishing": 174825
     },
     "test": {
-      "legitimate": 1232,
-      "phishing": 980
+      "legitimate": 53419,
+      "phishing": 43706
     }
   },
-  "feature_count": 30,
-  "features": [
-    "having_IPhaving_IP_Address",
-    "URLURL_Length",
-    "Shortining_Service",
-    "having_At_Symbol",
-    "double_slash_redirecting",
-    "Prefix_Suffix",
-    "having_Sub_Domain",
-    "SSLfinal_State",
-    "Domain_registeration_length",
-    "Favicon",
-    "port",
-    "HTTPS_token",
-    "Request_URL",
-    "URL_of_Anchor",
-    "Links_in_tags",
-    "SFH",
-    "Submitting_to_email",
-    "Abnormal_URL",
-    "Redirect",
-    "on_mouseover",
-    "RightClick",
-    "popUpWidnow",
-    "Iframe",
-    "age_of_domain",
-    "DNSRecord",
-    "web_traffic",
-    "Page_Rank",
-    "Google_Index",
-    "Links_pointing_to_page",
-    "Statistical_report"
-  ]
+  "source_format": "url,label",
+  "label_mapping": {
+    "0": "legitimate",
+    "1": "phishing"
+  }
 }

@@ -5,7 +5,6 @@ const result = document.querySelector("#result");
 const label = document.querySelector("#label");
 const confidence = document.querySelector("#confidence");
 const modelSource = document.querySelector("#model-source");
-const htmlFetch = document.querySelector("#html-fetch");
 const explanation = document.querySelector("#explanation");
 const explanationText = document.querySelector("#explanation-text");
 const riskFactors = document.querySelector("#risk-factors");
@@ -28,6 +27,13 @@ const visibleFeatures = [
   ["has_public_hosting_platform", "Public hosting"],
   ["has_brand_impersonation", "Brand signal"],
   ["suspicious_word_count", "Suspicious words"],
+  ["html_available", "HTML available"],
+  ["num_forms", "Forms"],
+  ["num_password_inputs", "Password inputs"],
+  ["num_iframes", "Iframes"],
+  ["has_login_form", "Login form"],
+  ["has_meta_refresh", "Meta refresh"],
+  ["has_javascript_redirect", "JS redirect"],
 ];
 
 function riskLevel(value, highWhenDetected = true) {
@@ -39,15 +45,8 @@ function statusText(value) {
   return value ? "Detected" : "Not Found";
 }
 
-function htmlBucketStatus(value) {
-  if (value === 2) return "High";
-  if (value === 1) return "Medium";
-  return "Low";
-}
-
 function buildRiskFactors(data) {
   const f = data.features || {};
-  const h = data.html_features || {};
   return [
     ["Public Hosting", statusText(f.has_public_hosting_platform), riskLevel(f.has_public_hosting_platform)],
     ["Brand Impersonation", statusText(f.has_brand_impersonation), riskLevel(f.has_brand_impersonation)],
@@ -55,16 +54,20 @@ function buildRiskFactors(data) {
     ["Redirect Parameter", statusText(f.has_redirect_param), riskLevel(f.has_redirect_param)],
     ["Embedded URL", statusText(f.has_embedded_url), riskLevel(f.has_embedded_url)],
     ["Risky TLD", statusText(f.has_suspicious_tld), riskLevel(f.has_suspicious_tld)],
-    ["Password Input", statusText(h.has_password_input), riskLevel(h.has_password_input)],
-    ["Iframe", statusText(h.has_iframe), riskLevel(h.has_iframe, false)],
-    ["External Resources", htmlBucketStatus(h.external_resource_ratio_bucket || 0), htmlBucketStatus(h.external_resource_ratio_bucket || 0)],
-    ["External Scripts", htmlBucketStatus(h.script_count_bucket || 0), htmlBucketStatus(h.script_count_bucket || 0)],
+    ["IP Address", statusText(f.has_ip), riskLevel(f.has_ip)],
+    ["At Symbol", statusText(f.has_at), riskLevel(f.has_at)],
+    ["Long Token", statusText(f.has_long_token), riskLevel(f.has_long_token)],
+    ["Encoded Characters", statusText(f.has_encoded_chars), riskLevel(f.has_encoded_chars, false)],
+    ["HTML Available", statusText(f.html_available), f.html_available ? "Low" : "Medium"],
+    ["Login Form", statusText(f.has_login_form), riskLevel(f.has_login_form)],
+    ["Password Input", statusText(f.num_password_inputs), riskLevel(f.num_password_inputs)],
+    ["Meta Refresh", statusText(f.has_meta_refresh), riskLevel(f.has_meta_refresh)],
+    ["JavaScript Redirect", statusText(f.has_javascript_redirect), riskLevel(f.has_javascript_redirect)],
   ];
 }
 
 function buildExplanation(data) {
   const f = data.features || {};
-  const h = data.html_features || {};
   const reasons = [];
 
   if (f.has_public_hosting_platform) reasons.push("website su dung public hosting");
@@ -72,9 +75,13 @@ function buildExplanation(data) {
   if (f.has_url_shortener) reasons.push("URL dung shortener");
   if (f.has_redirect_param) reasons.push("URL co tham so redirect");
   if (f.has_embedded_url) reasons.push("URL long URL khac ben trong");
-  if (h.has_password_input) reasons.push("HTML co password input");
-  if ((h.external_resource_ratio_bucket || 0) >= 2) reasons.push("HTML phu thuoc nhieu external resources");
-  if ((h.script_count_bucket || 0) >= 2) reasons.push("trang co nhieu script");
+  if (f.has_ip) reasons.push("URL dung dia chi IP");
+  if (f.has_at) reasons.push("URL co ky tu @");
+  if (f.has_long_token) reasons.push("URL co token dai bat thuong");
+  if (f.has_login_form) reasons.push("HTML co form dang nhap");
+  if (f.num_password_inputs) reasons.push("HTML co password input");
+  if (f.has_meta_refresh) reasons.push("HTML co meta refresh");
+  if (f.has_javascript_redirect) reasons.push("HTML co JavaScript redirect");
 
   if (data.label === "phishing") {
     const detail = reasons.length ? reasons.join(", ") : "xac suat phishing vuot nguong cua mo hinh";
@@ -85,7 +92,7 @@ function buildExplanation(data) {
     return `Mo hinh van phan loai legitimate, nhung can luu y: ${reasons.join(", ")}.`;
   }
 
-  return "Mo hinh phan loai legitimate vi chua thay cac dau hieu rui ro manh trong URL va HTML.";
+  return "Mo hinh phan loai legitimate vi chua thay cac dau hieu rui ro manh trong URL.";
 }
 
 function clearChildren(element) {
@@ -119,14 +126,6 @@ function renderFeatureCards(data) {
   visibleFeatures.forEach(([key, title]) => {
     features.appendChild(createFeatureCard(title, data.features[key]));
   });
-
-  if (data.html_features) {
-    Object.entries(data.html_features)
-      .slice(0, 8)
-      .forEach(([key, value]) => {
-        features.appendChild(createFeatureCard(key, value));
-      });
-  }
 }
 
 function createFeatureCard(title, value) {
@@ -147,7 +146,6 @@ function showError(message) {
   label.textContent = "error";
   confidence.textContent = "0%";
   modelSource.textContent = message;
-  htmlFetch.textContent = "";
   explanation.classList.add("hidden");
   features.classList.add("hidden");
 }
@@ -183,9 +181,6 @@ form.addEventListener("submit", async (event) => {
     label.textContent = data.label;
     confidence.textContent = `${percent}%`;
     modelSource.textContent = data.model_source;
-    htmlFetch.textContent = data.html_fetch?.fetched
-      ? `HTML fetched: ${data.html_fetch.bytes_read} bytes`
-      : `HTML fetch failed: ${data.html_fetch?.error || "unknown error"}`;
 
     explanationText.textContent = buildExplanation(data);
     renderRiskFactors(buildRiskFactors(data));
