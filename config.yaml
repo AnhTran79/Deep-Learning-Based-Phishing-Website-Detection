@@ -1,0 +1,27 @@
+data:
+  metadata_path: output/mendeley_metadata.csv
+  html_root: dataset
+  processed_path: data/processed/mendeley_url_html_label.csv.gz
+  splits_dir: data/splits
+  test_size: 0.15
+  val_size: 0.15
+  random_state: 42
+
+preprocessing:
+  max_url_len: 200
+  max_html_len: 2000
+  min_html_length: 100
+  url_vocab_size: 128
+  html_vocab_size: 256
+
+training:
+  batch_size: 64
+  epochs: 20
+  learning_rate: 0.001
+  early_stopping_patience: 3
+
+model:
+  embedding_dim: 64
+  conv_filters: 128
+  kernel_size: 5
+  dropout_rate: 0.5

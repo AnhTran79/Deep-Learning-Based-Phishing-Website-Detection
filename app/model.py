@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import json
+import csv
 import os
 from pathlib import Path
 
@@ -11,139 +11,144 @@ except ModuleNotFoundError:  # pragma: no cover
 
 try:
     import torch
-    from torch import nn
 except ModuleNotFoundError:  # pragma: no cover
     torch = None
-    nn = None
 
-from app.features import (
-    COMBINED_FEATURE_NAMES,
-    extract_html_features,
-    extract_url_features,
-    fetch_html,
-    heuristic_phishing_score,
-    normalize_url,
-)
+from app.features import extract_html_features, extract_url_features, fetch_html, heuristic_phishing_score
+
+try:
+    from src.features.handcrafted_features import handcrafted_feature_vector
+    from src.models.dual_branch_cnn import DualBranchCnnClassifier
+    from src.models.html_cnn import HtmlCnnClassifier
+    from src.models.url_cnn import UrlCnnClassifier
+    from src.models.url_lstm import UrlLstmClassifier
+    from src.preprocessing.text_cleaning import html_to_visible_text, normalize_url_text
+    from src.preprocessing.tokenizers import decode_config, encode_char_sequence
+except ModuleNotFoundError:  # pragma: no cover
+    DualBranchCnnClassifier = None
+    HtmlCnnClassifier = None
+    UrlCnnClassifier = None
+    UrlLstmClassifier = None
+    decode_config = None
+    encode_char_sequence = None
+    handcrafted_feature_vector = None
+    html_to_visible_text = None
+    normalize_url_text = None
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-ARTIFACT_PATH = PROJECT_ROOT / "artifacts" / "best_model.json"
-TABULAR_MODEL_PATH = PROJECT_ROOT / "artifacts" / "deep_learning_model.joblib"
-URL_CNN_PATH = PROJECT_ROOT / "artifacts" / "url_cnn.pt"
-
-URL_CNN_MAX_LEN = 200
-URL_CNN_VOCAB_SIZE = 128
-
-
-def encode_url(url: str) -> list[int]:
-    normalized = normalize_url(url)
-    ids = [min(ord(char), URL_CNN_VOCAB_SIZE - 1) for char in normalized[:URL_CNN_MAX_LEN]]
-    return ids + [0] * (URL_CNN_MAX_LEN - len(ids))
-
-
-if nn is not None:
-
-    class CharCnnUrlClassifier(nn.Module):
-        def __init__(self, vocab_size: int = URL_CNN_VOCAB_SIZE, embedding_dim: int = 32) -> None:
-            super().__init__()
-            self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=0)
-            self.encoder = nn.Sequential(
-                nn.Conv1d(embedding_dim, 64, kernel_size=5, padding=2),
-                nn.ReLU(),
-                nn.BatchNorm1d(64),
-                nn.Conv1d(64, 128, kernel_size=5, padding=2),
-                nn.ReLU(),
-                nn.AdaptiveMaxPool1d(1),
-            )
-            self.classifier = nn.Sequential(
-                nn.Flatten(),
-                nn.Linear(128, 64),
-                nn.ReLU(),
-                nn.Dropout(0.25),
-                nn.Linear(64, 1),
-            )
-
-        def forward(self, token_ids: torch.Tensor) -> torch.Tensor:
-            embedded = self.embedding(token_ids).transpose(1, 2)
-            encoded = self.encoder(embedded)
-            return self.classifier(encoded).squeeze(-1)
-
-else:
-
-    class CharCnnUrlClassifier:  # type: ignore[no-redef]
-        def __init__(self, *args, **kwargs) -> None:
-            raise RuntimeError("PyTorch is required to instantiate CharCnnUrlClassifier.")
+SAVED_MODEL_DIR = PROJECT_ROOT / "models" / "saved"
+MODEL_COMPARISON_PATH = PROJECT_ROOT / "reports" / "results" / "model_comparison.csv"
+DUAL_BRANCH_CNN_PATH = SAVED_MODEL_DIR / "dual_branch_cnn.pt"
+HTML_CNN_PATH = SAVED_MODEL_DIR / "html_cnn.pt"
+URL_CNN_PATH = SAVED_MODEL_DIR / "url_cnn.pt"
+URL_LSTM_PATH = SAVED_MODEL_DIR / "url_lstm.pt"
+TFIDF_LOGREG_PATH = SAVED_MODEL_DIR / "baseline_tfidf_logreg.joblib"
+RANDOM_FOREST_PATH = SAVED_MODEL_DIR / "baseline_random_forest.joblib"
 
 
 class PhishingDetector:
-    threshold = 0.40
+    threshold = 0.50
 
     def __init__(self) -> None:
-        self.artifact = self._load_json_artifact()
-        self.tabular_artifact = self._load_tabular_artifact()
-        self.url_cnn = self._load_url_cnn()
         self.fetch_html_at_runtime = os.environ.get("FETCH_HTML_AT_RUNTIME", "1") != "0"
-        self.html_timeout = float(os.environ.get("HTML_FETCH_TIMEOUT", "4"))
+        self.html_timeout = float(os.environ.get("HTML_FETCH_TIMEOUT", "8"))
+        self.torch_artifacts = {
+            "dual_branch_cnn": self._load_torch_artifact(DUAL_BRANCH_CNN_PATH),
+            "html_cnn": self._load_torch_artifact(HTML_CNN_PATH),
+            "url_cnn": self._load_torch_artifact(URL_CNN_PATH),
+            "url_lstm": self._load_torch_artifact(URL_LSTM_PATH),
+        }
+        self.baseline_tfidf = self._load_joblib_model(TFIDF_LOGREG_PATH)
+        self.baseline_rf = self._load_joblib_model(RANDOM_FOREST_PATH)
+        self.model_scores = self._load_model_scores(MODEL_COMPARISON_PATH)
 
-    def _load_json_artifact(self) -> dict | None:
-        if not ARTIFACT_PATH.exists():
-            return None
-        return json.loads(ARTIFACT_PATH.read_text(encoding="utf-8"))
+    def _load_model_scores(self, path: Path) -> dict[str, float]:
+        if not path.exists():
+            return {}
+        with path.open("r", encoding="utf-8", newline="") as file:
+            rows = csv.DictReader(file)
+            return {
+                row["model"]: float(row["f1"])
+                for row in rows
+                if row.get("model") and row.get("f1")
+            }
 
-    def _load_tabular_artifact(self) -> dict | None:
-        if joblib is None or not TABULAR_MODEL_PATH.exists():
+    def _load_joblib_model(self, path: Path):
+        if joblib is None or not path.exists():
             return None
-        artifact = joblib.load(TABULAR_MODEL_PATH)
-        if artifact.get("model_type") != "sklearn_mlp_url_html_features":
-            return None
-        return artifact
+        artifact = joblib.load(path)
+        return artifact.get("model") if isinstance(artifact, dict) else artifact
 
-    def _load_url_cnn(self):
-        if torch is None or not URL_CNN_PATH.exists():
+    def _load_torch_artifact(self, path: Path):
+        if torch is None or not path.exists() or decode_config is None:
             return None
-        model = CharCnnUrlClassifier(vocab_size=URL_CNN_VOCAB_SIZE)
-        state = torch.load(URL_CNN_PATH, map_location="cpu", weights_only=True)
-        model.load_state_dict(state["model_state_dict"] if isinstance(state, dict) and "model_state_dict" in state else state)
+        checkpoint = torch.load(path, map_location="cpu", weights_only=False)
+        model_type = checkpoint.get("model_type")
+        url_config = decode_config(checkpoint.get("url_tokenizer", {"max_len": 200, "vocab_size": 128}))
+        html_config = decode_config(checkpoint.get("html_tokenizer", {"max_len": 2000, "vocab_size": 256}))
+        model_config = checkpoint.get("model_config", {})
+        embedding_dim = int(model_config.get("embedding_dim", 64))
+        dropout_rate = float(model_config.get("dropout_rate", 0.5))
+
+        if model_type == "dual_branch_cnn" and DualBranchCnnClassifier is not None:
+            model = DualBranchCnnClassifier(
+                url_vocab_size=url_config.vocab_size,
+                html_vocab_size=html_config.vocab_size,
+                embedding_dim=embedding_dim,
+                dropout_rate=dropout_rate,
+            )
+        elif model_type == "html_cnn" and HtmlCnnClassifier is not None:
+            model = HtmlCnnClassifier(vocab_size=html_config.vocab_size, embedding_dim=embedding_dim, dropout_rate=dropout_rate)
+        elif model_type == "url_cnn" and UrlCnnClassifier is not None:
+            model = UrlCnnClassifier(vocab_size=url_config.vocab_size, embedding_dim=embedding_dim, dropout_rate=dropout_rate)
+        elif model_type == "url_lstm" and UrlLstmClassifier is not None:
+            model = UrlLstmClassifier(vocab_size=url_config.vocab_size, embedding_dim=embedding_dim, dropout_rate=dropout_rate)
+        else:
+            return None
+
+        model.load_state_dict(checkpoint["model_state_dict"])
         model.eval()
-        return model
+        return {
+            "model": model,
+            "model_type": model_type,
+            "url_config": url_config,
+            "html_config": html_config,
+            "threshold": float(checkpoint.get("threshold", self.threshold)),
+        }
 
-    def _predict_with_url_cnn(self, url: str) -> float | None:
-        if torch is None or self.url_cnn is None:
+    def _predict_torch(self, artifact: dict | None, url: str, html: str | None) -> float | None:
+        if (
+            torch is None
+            or artifact is None
+            or encode_char_sequence is None
+            or normalize_url_text is None
+            or html_to_visible_text is None
+        ):
             return None
-        token_ids = torch.tensor([encode_url(url)], dtype=torch.long)
+        model_type = artifact["model_type"]
+        url_ids = torch.tensor([encode_char_sequence(normalize_url_text(url), artifact["url_config"])], dtype=torch.long)
+        html_ids = torch.tensor([encode_char_sequence(html_to_visible_text(html or ""), artifact["html_config"])], dtype=torch.long)
+        if model_type in {"dual_branch_cnn", "html_cnn"} and not html:
+            return None
         with torch.no_grad():
-            logits = self.url_cnn(token_ids)
+            if model_type == "dual_branch_cnn":
+                logits = artifact["model"](url_ids, html_ids)
+            elif model_type == "html_cnn":
+                logits = artifact["model"](html_ids)
+            else:
+                logits = artifact["model"](url_ids)
             return float(torch.sigmoid(logits)[0].item())
 
-    def _predict_with_tabular_model(self, feature_values: dict[str, int | float]) -> float | None:
-        if self.tabular_artifact is None:
+    def _predict_tfidf(self, url: str, html: str | None) -> float | None:
+        if self.baseline_tfidf is None:
             return None
-        pipeline = self.tabular_artifact.get("pipeline")
-        feature_names = self.tabular_artifact.get("feature_names") or COMBINED_FEATURE_NAMES
-        if pipeline is None or not hasattr(pipeline, "predict_proba"):
-            return None
-        vector = [[float(feature_values.get(name, 0.0)) for name in feature_names]]
-        probabilities = pipeline.predict_proba(vector)[0]
-        classes = list(getattr(pipeline, "classes_", []))
-        if not classes and hasattr(pipeline, "steps"):
-            classes = list(getattr(pipeline.steps[-1][1], "classes_", []))
-        if 1 not in classes:
-            return None
-        return float(probabilities[classes.index(1)])
+        return float(self.baseline_tfidf.predict_proba([f"{url} {html or ''}"])[0][1])
 
-    def _combine_probabilities(
-        self,
-        heuristic_probability: float,
-        cnn_probability: float | None,
-        tabular_probability: float | None,
-    ) -> tuple[float, str]:
-        if cnn_probability is not None and tabular_probability is not None:
-            return (cnn_probability * 0.65) + (tabular_probability * 0.35), "url_cnn_plus_url_html_mlp"
-        if cnn_probability is not None:
-            return cnn_probability, "url_cnn_deep_learning"
-        if tabular_probability is not None:
-            return max(tabular_probability, heuristic_probability), "url_html_mlp_deep_learning"
-        return heuristic_probability, "heuristic_url_html_rules"
+    def _predict_random_forest(self, url: str, html: str | None) -> float | None:
+        if self.baseline_rf is None or handcrafted_feature_vector is None:
+            return None
+        return float(self.baseline_rf.predict_proba([handcrafted_feature_vector(url, html or "")])[0][1])
 
     def predict(self, url: str) -> dict:
         html = fetch_html(url, timeout=self.html_timeout) if self.fetch_html_at_runtime else None
@@ -151,16 +156,40 @@ class PhishingDetector:
         html_features = extract_html_features(html, base_url=url)
         feature_values = {**url_features.to_dict(), **html_features.to_dict()}
 
-        heuristic_probability = heuristic_phishing_score(url_features, html_features)
-        cnn_probability = self._predict_with_url_cnn(url)
-        tabular_probability = self._predict_with_tabular_model(feature_values)
-        phishing_probability, model_source = self._combine_probabilities(
-            heuristic_probability=heuristic_probability,
-            cnn_probability=cnn_probability,
-            tabular_probability=tabular_probability,
-        )
+        component_probabilities = {
+            "dual_branch_cnn": self._predict_torch(self.torch_artifacts["dual_branch_cnn"], url, html),
+            "html_cnn": self._predict_torch(self.torch_artifacts["html_cnn"], url, html),
+            "url_cnn": self._predict_torch(self.torch_artifacts["url_cnn"], url, html),
+            "url_lstm": self._predict_torch(self.torch_artifacts["url_lstm"], url, html),
+            "baseline_tfidf_logreg": self._predict_tfidf(url, html),
+            "baseline_random_forest": self._predict_random_forest(url, html),
+            "heuristic_url_html_rules": heuristic_phishing_score(url_features, html_features),
+        }
 
-        label = "phishing" if phishing_probability >= self.threshold else "legitimate"
+        priority = [
+            "dual_branch_cnn",
+            "html_cnn",
+            "url_cnn",
+            "url_lstm",
+            "baseline_tfidf_logreg",
+            "baseline_random_forest",
+            "heuristic_url_html_rules",
+        ]
+        available_models = [name for name in priority if component_probabilities[name] is not None]
+        if self.model_scores:
+            model_source = max(
+                available_models,
+                key=lambda name: (self.model_scores.get(name, -1.0), -priority.index(name)),
+            )
+        else:
+            model_source = available_models[0]
+        phishing_probability = float(component_probabilities[model_source])
+        threshold = self.threshold
+        artifact = self.torch_artifacts.get(model_source)
+        if artifact is not None:
+            threshold = artifact["threshold"]
+
+        label = "phishing" if phishing_probability >= threshold else "legitimate"
         confidence = phishing_probability if label == "phishing" else 1.0 - phishing_probability
         return {
             "url": url,
@@ -170,9 +199,7 @@ class PhishingDetector:
             "model_source": model_source,
             "features": feature_values,
             "component_probabilities": {
-                "heuristic_url_html_rules": round(heuristic_probability, 4),
-                "url_cnn_deep_learning": round(cnn_probability, 4) if cnn_probability is not None else None,
-                "url_html_mlp_deep_learning": round(tabular_probability, 4) if tabular_probability is not None else None,
+                key: round(value, 4) if value is not None else None for key, value in component_probabilities.items()
             },
             "html_fetch": {
                 "enabled": self.fetch_html_at_runtime,

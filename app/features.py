@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import math
 import re
-import socket
 from collections import Counter
 from dataclasses import asdict, dataclass
 from html import unescape
@@ -156,6 +155,7 @@ LONG_TOKEN_PATTERN = re.compile(r"[a-z0-9]{18,}", re.IGNORECASE)
 TAG_PATTERN = re.compile(r"<\s*([a-z0-9]+)\b", re.IGNORECASE)
 HREF_PATTERN = re.compile(r"""href\s*=\s*["']([^"']+)["']""", re.IGNORECASE)
 TITLE_PATTERN = re.compile(r"<title[^>]*>(.*?)</title>", re.IGNORECASE | re.DOTALL)
+SCHEME_PATTERN = re.compile(r"^[a-z][a-z0-9+.-]*://", re.IGNORECASE)
 
 
 @dataclass(frozen=True)
@@ -216,7 +216,7 @@ def normalize_url(url: str) -> str:
     value = url.strip()
     if not value:
         return value
-    if "://" not in value:
+    if not SCHEME_PATTERN.match(value):
         value = "https://" + value
     return value
 
@@ -294,16 +294,14 @@ def extract_url_features(url: str) -> UrlFeatures:
 
 def fetch_html(url: str, timeout: float = 4.0, max_bytes: int = 500_000) -> str | None:
     normalized = normalize_url(url)
-    request = Request(
-        normalized,
-        headers={
-            "User-Agent": "Mozilla/5.0 PhishingDetectionResearchBot/1.0",
-            "Accept": "text/html,application/xhtml+xml",
-        },
-    )
-    previous_timeout = socket.getdefaulttimeout()
-    socket.setdefaulttimeout(timeout)
     try:
+        request = Request(
+            normalized,
+            headers={
+                "User-Agent": "Mozilla/5.0 PhishingDetectionResearchBot/1.0",
+                "Accept": "text/html,application/xhtml+xml",
+            },
+        )
         with urlopen(request, timeout=timeout) as response:
             content_type = response.headers.get("content-type", "")
             if "html" not in content_type.lower():
@@ -313,8 +311,6 @@ def fetch_html(url: str, timeout: float = 4.0, max_bytes: int = 500_000) -> str 
             return body.decode(charset, errors="replace")
     except Exception:
         return None
-    finally:
-        socket.setdefaulttimeout(previous_timeout)
 
 
 def extract_html_features(html: str | None, base_url: str = "") -> HtmlFeatures:

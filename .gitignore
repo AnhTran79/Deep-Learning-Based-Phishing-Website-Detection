@@ -1,12 +1,23 @@
 .venv/
 .venv*/
+.uv-cache/
+.uv-python/
 __pycache__/
 *.py[cod]
 .pytest_cache/
 .idea/
+*.log
 
 artifacts/*.pkl
 chart/
-dataset/*.csv
-dataset/*.jsonl
-dataset/html_cache/
+data/raw/
+data/processed/*.csv
+data/processed/*.csv.gz
+data/splits/
+dataset/*.html
+models/saved/*.pt
+models/saved/*.joblib
+models/saved/*_metrics.json
+models/tokenizers/
+reports/results/*.csv
+reports/figures/*.png
