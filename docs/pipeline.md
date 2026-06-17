@@ -72,9 +72,9 @@ Deep learning:
 Results:
 
 ```text
-reports/results/model_comparison.csv
-reports/figures/confusion_matrix_<model>.png
-reports/figures/roc_curve_<model>.png
+reports/results/mendeley/model_comparison.csv
+reports/figures/mendeley/confusion_matrix_<model>.png
+reports/figures/mendeley/roc_curve_<model>.png
 ```
 
 Metrics include Accuracy, Precision, Recall, F1-score, ROC-AUC, Confusion Matrix, False Positive Rate, and False Negative Rate.

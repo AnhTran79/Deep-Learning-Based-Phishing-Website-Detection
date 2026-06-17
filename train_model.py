@@ -7,6 +7,13 @@ from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
+QUICK_MAX_ROWS = 5000
+QUICK_EPOCHS = 3
+
+
+def project_path(value: str | Path) -> Path:
+    path = Path(value)
+    return path if path.is_absolute() else PROJECT_ROOT / path
 
 
 def run_step(command: list[str], title: str) -> None:
@@ -105,12 +112,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--html-root", default="dataset")
     parser.add_argument("--data", default="data/processed/mendeley_url_html_label.csv.gz")
     parser.add_argument("--out-dir", default="models/saved")
-    parser.add_argument("--results-dir", default="reports/results")
-    parser.add_argument("--figures-dir", default="reports/figures")
+    parser.add_argument("--results-dir", default="reports/results/mendeley")
+    parser.add_argument("--figures-dir", default="reports/figures/mendeley")
     parser.add_argument("--min-html-length", type=int, default=100)
     parser.add_argument("--html-max-chars", type=int, default=2000)
     parser.add_argument("--max-html-len", type=int, default=2000)
     parser.add_argument("--max-rows", type=int, default=0, help="0 means use the full dataset.")
+    parser.add_argument(
+        "--quick",
+        action="store_true",
+        help=f"Shortcut for a fast smoke run: --max-rows {QUICK_MAX_ROWS} --epochs {QUICK_EPOCHS} --cpu.",
+    )
     parser.add_argument(
         "--deep-model",
         default="all",
@@ -123,12 +135,36 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--force-prepare", action="store_true", help="Rebuild the processed gzip dataset.")
     parser.add_argument("--skip-baselines", action="store_true")
     parser.add_argument("--skip-deep", action="store_true")
+    parser.add_argument("--skip-evaluation", action="store_true")
     return parser.parse_args()
 
 
+def normalize_args(args: argparse.Namespace) -> argparse.Namespace:
+    if args.quick:
+        if args.max_rows == 0:
+            args.max_rows = QUICK_MAX_ROWS
+        if args.epochs is None:
+            args.epochs = QUICK_EPOCHS
+        args.cpu = True
+    return args
+
+
+def validate_inputs(args: argparse.Namespace) -> None:
+    metadata_path = project_path(args.metadata)
+    html_root = project_path(args.html_root)
+    data_path = project_path(args.data)
+
+    if args.force_prepare or not data_path.exists():
+        if not metadata_path.exists():
+            raise FileNotFoundError(f"Metadata file not found: {metadata_path}")
+        if not html_root.exists():
+            raise FileNotFoundError(f"HTML dataset folder not found: {html_root}")
+
+
 def main() -> None:
-    args = parse_args()
-    data_path = PROJECT_ROOT / args.data
+    args = normalize_args(parse_args())
+    validate_inputs(args)
+    data_path = project_path(args.data)
 
     if args.force_prepare or not data_path.exists():
         run_step(build_prepare_command(args), "Prepare dataset")
@@ -141,9 +177,12 @@ def main() -> None:
     if not args.skip_deep:
         run_step(build_deep_command(args), "Train deep models")
 
-    run_step(build_compare_command(args), "Export comparison table and charts")
-    print("\nDone. Results: reports/results/model_comparison_sorted.csv", flush=True)
-    print("Chart: reports/figures/model_comparison_metrics.png", flush=True)
+    if not args.skip_evaluation:
+        run_step(build_compare_command(args), "Export comparison table and charts")
+        print("\nDone. Results: reports/results/mendeley/model_comparison_sorted.csv", flush=True)
+        print("Chart: reports/figures/mendeley/model_comparison_metrics.png", flush=True)
+    else:
+        print("\nDone. Evaluation export skipped.", flush=True)
 
 
 if __name__ == "__main__":

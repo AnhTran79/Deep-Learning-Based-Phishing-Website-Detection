@@ -38,7 +38,8 @@ except ModuleNotFoundError:  # pragma: no cover
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SAVED_MODEL_DIR = PROJECT_ROOT / "models" / "saved"
-MODEL_COMPARISON_PATH = PROJECT_ROOT / "reports" / "results" / "model_comparison.csv"
+MODEL_COMPARISON_PATH = PROJECT_ROOT / "reports" / "results" / "mendeley" / "model_comparison.csv"
+LEGACY_MODEL_COMPARISON_PATH = PROJECT_ROOT / "reports" / "results" / "model_comparison.csv"
 DUAL_BRANCH_CNN_PATH = SAVED_MODEL_DIR / "dual_branch_cnn.pt"
 HTML_CNN_PATH = SAVED_MODEL_DIR / "html_cnn.pt"
 URL_CNN_PATH = SAVED_MODEL_DIR / "url_cnn.pt"
@@ -62,17 +63,23 @@ class PhishingDetector:
         self.baseline_tfidf = self._load_joblib_model(TFIDF_LOGREG_PATH)
         self.baseline_rf = self._load_joblib_model(RANDOM_FOREST_PATH)
         self.model_scores = self._load_model_scores(MODEL_COMPARISON_PATH)
+        if not self.model_scores:
+            self.model_scores = self._load_model_scores(LEGACY_MODEL_COMPARISON_PATH)
 
     def _load_model_scores(self, path: Path) -> dict[str, float]:
         if not path.exists():
             return {}
+        scores: dict[str, float] = {}
         with path.open("r", encoding="utf-8", newline="") as file:
             rows = csv.DictReader(file)
-            return {
-                row["model"]: float(row["f1"])
-                for row in rows
-                if row.get("model") and row.get("f1")
-            }
+            for row in rows:
+                if not row.get("model") or not row.get("f1"):
+                    continue
+                try:
+                    scores[row["model"]] = float(row["f1"])
+                except ValueError:
+                    continue
+        return scores
 
     def _load_joblib_model(self, path: Path):
         if joblib is None or not path.exists():
@@ -99,11 +106,23 @@ class PhishingDetector:
                 dropout_rate=dropout_rate,
             )
         elif model_type == "html_cnn" and HtmlCnnClassifier is not None:
-            model = HtmlCnnClassifier(vocab_size=html_config.vocab_size, embedding_dim=embedding_dim, dropout_rate=dropout_rate)
+            model = HtmlCnnClassifier(
+                vocab_size=html_config.vocab_size,
+                embedding_dim=embedding_dim,
+                dropout_rate=dropout_rate,
+            )
         elif model_type == "url_cnn" and UrlCnnClassifier is not None:
-            model = UrlCnnClassifier(vocab_size=url_config.vocab_size, embedding_dim=embedding_dim, dropout_rate=dropout_rate)
+            model = UrlCnnClassifier(
+                vocab_size=url_config.vocab_size,
+                embedding_dim=embedding_dim,
+                dropout_rate=dropout_rate,
+            )
         elif model_type == "url_lstm" and UrlLstmClassifier is not None:
-            model = UrlLstmClassifier(vocab_size=url_config.vocab_size, embedding_dim=embedding_dim, dropout_rate=dropout_rate)
+            model = UrlLstmClassifier(
+                vocab_size=url_config.vocab_size,
+                embedding_dim=embedding_dim,
+                dropout_rate=dropout_rate,
+            )
         else:
             return None
 
@@ -127,8 +146,14 @@ class PhishingDetector:
         ):
             return None
         model_type = artifact["model_type"]
-        url_ids = torch.tensor([encode_char_sequence(normalize_url_text(url), artifact["url_config"])], dtype=torch.long)
-        html_ids = torch.tensor([encode_char_sequence(html_to_visible_text(html or ""), artifact["html_config"])], dtype=torch.long)
+        url_ids = torch.tensor(
+            [encode_char_sequence(normalize_url_text(url), artifact["url_config"])],
+            dtype=torch.long,
+        )
+        html_ids = torch.tensor(
+            [encode_char_sequence(html_to_visible_text(html or ""), artifact["html_config"])],
+            dtype=torch.long,
+        )
         if model_type in {"dual_branch_cnn", "html_cnn"} and not html:
             return None
         with torch.no_grad():

@@ -59,7 +59,7 @@ Recall is emphasized because missed phishing pages are high risk.
 - Backend fetches HTML.
 - Preprocessing matches training.
 - Trained Mendeley model predicts phishing probability.
-- Result is logged to `reports/results/prediction_history.csv`.
+- Result is logged to `reports/results/mendeley/prediction_history.csv`.
 
 ## 8. Limitations
 
@@ -69,7 +69,7 @@ Recall is emphasized because missed phishing pages are high risk.
 
 ## 9. Future Work
 
-- Add independent Phish360 evaluation using URL + HTML only.
+- Extend Phish360 experiments with URL + HTML + screenshot fusion.
 - Calibrate thresholds for phishing recall.
 - Add DOM-aware features.
 - Compare against transformer encoders.

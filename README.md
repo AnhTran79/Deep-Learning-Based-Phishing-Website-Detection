@@ -1,17 +1,26 @@
 # Deep Learning-Based Phishing Website Detection
 
-Project phat hien website phishing bang hoc sau tu **Mendeley URL + HTML dataset**.
+Project phat hien website phishing bang hoc sau.
+
+Project hien co 2 luong huan luyen rieng:
+
+```text
+1. Mendeley pipeline: URL + HTML
+2. Phish360 pipeline: URL + HTML + Screenshot
+```
 
 Scope:
 
-- Chi dung URL va HTML source code.
-- Khong dung screenshot, image branch, ResNet/EfficientNet.
+- Luong Mendeley chi dung URL va HTML source code.
+- Luong Phish360 dung URL, HTML source code va screenshot.
 - Khong phu thuoc blacklist.
 - Label: `0 = legitimate`, `1 = phishing`.
 
 ## Dataset Dang Dung
 
-Dataset chinh la metadata Mendeley da tao san:
+### Luong 1: Mendeley URL + HTML
+
+Dataset Mendeley da tao san:
 
 ```text
 output/mendeley_metadata.csv
@@ -31,6 +40,39 @@ dataset/
 
 Neu thu muc HTML nam o cho khac, truyen lai bang `--html-root`.
 
+### Luong 2: Phish360 URL + HTML + Screenshot
+
+Dataset Phish360 dat tai:
+
+```text
+https://web.cs.hacettepe.edu.tr/~selman/phish360-dataset/
+```
+
+Do dataset co dung luong lon, folder dataset khong duoc commit len GitHub. Sau khi tai dataset, dat vao:
+
+```text
+data/external/Phish360/
+```
+
+Moi sample co cau truc:
+
+```text
+<sample_id>/
+  URL/url.txt
+  RAW-HTML/index.html
+  SCREEN-SHOT/screen_shoot.png
+  Label/label.txt
+```
+
+Binary label duoc suy ra tu ten folder:
+
+```text
+L... -> 0 = legitimate
+P... -> 1 = phishing
+```
+
+`Label/label.txt` duoc giu nhu metadata phu `target_brand`, vi nhieu phishing sample ghi brand bi gia mao thay vi chu `phish`.
+
 ## Project Layout
 
 ```text
@@ -46,14 +88,122 @@ src/training/        train baselines va deep models
 src/evaluation/      metrics, figures, model comparison
 src/inference/       predict mot URL
 models/saved/        model da train
-reports/results/     model_comparison.csv, prediction_history.csv
-reports/figures/     confusion matrix va ROC curve
+reports/results/     ket qua tach theo dataset: mendeley/, phish360/
+reports/figures/     chart tach theo dataset: mendeley/, phish360/
 ```
+
+## Hai Luong Huan Luyen Rieng
+
+### 1. Mendeley: URL + HTML
+
+Lenh nay giu nguyen pipeline cu:
+
+```bash
+python train_model.py
+```
+
+Ket qua:
+
+```text
+reports/results/mendeley/model_comparison.csv
+models/saved/
+reports/figures/mendeley/
+```
+
+### 2. Phish360: URL + HTML + Screenshot
+
+Lenh rieng cho pipeline multi-modal moi:
+
+```bash
+python train_phish360.py
+```
+
+Lenh nay tu dong:
+
+```text
+1. Tao index CSV tu data/external/Phish360
+2. Train cac model Phish360
+3. Ghi ket qua rieng cho Phish360
+```
+
+Chay nhanh de smoke test:
+
+```bash
+python train_phish360.py --quick
+```
+
+Chi train model fusion 3 nhanh:
+
+```bash
+python train_phish360.py --model tri_branch_cnn
+```
+
+Chi tao CSV index, chua train:
+
+```bash
+python train_phish360.py --force-prepare --skip-training
+```
+
+Output rieng:
+
+```text
+data/processed/phish360_url_html_screenshot.csv
+reports/results/phish360/phish360_model_comparison.csv
+models/saved/phish360/
+reports/figures/phish360/
+```
+
+Phish360 models:
+
+- `url_cnn`: URL only.
+- `url_lstm`: URL only.
+- `html_cnn`: HTML only.
+- `screenshot_cnn`: Screenshot only.
+- `dual_branch_cnn`: URL + HTML.
+- `tri_branch_cnn`: URL + HTML + Screenshot.
 
 ## Setup
 
 ```bash
 pip install -r requirements.txt
+```
+
+## One-Command Training Pipeline
+
+Lenh khuyen dung:
+
+```bash
+python train_model.py
+```
+
+Lenh nay tu dong:
+
+```text
+1. Prepare dataset tu output/mendeley_metadata.csv + dataset/*.html
+2. Train baseline models
+3. Train deep models
+4. Export model comparison, classification reports va charts
+```
+
+Chay nhanh de smoke test pipeline:
+
+```bash
+python train_model.py --quick
+```
+
+`--quick` tuong duong voi:
+
+```text
+--max-rows 5000 --epochs 3 --cpu
+```
+
+Mot so tuy chon hay dung:
+
+```bash
+python train_model.py --skip-deep
+python train_model.py --deep-model dual_branch_cnn
+python train_model.py --force-prepare
+python train_model.py --skip-evaluation
 ```
 
 ## Prepare Dataset Tu Metadata CSV
@@ -166,18 +316,22 @@ Deep models:
 Tat ca model ghi metrics vao:
 
 ```text
-reports/results/model_comparison.csv
-reports/figures/confusion_matrix_<model>.png
-reports/figures/roc_curve_<model>.png
+reports/results/mendeley/model_comparison.csv
+reports/results/mendeley/model_comparison_sorted.csv
+reports/results/mendeley/classification_reports.csv
+reports/results/mendeley/classification_report_<model>.txt
+reports/figures/mendeley/confusion_matrix_<model>.png
+reports/figures/mendeley/roc_curve_<model>.png
+reports/figures/mendeley/model_comparison_metrics.png
 ```
 
 Xem bang so sanh:
 
 ```bash
-python -m src.evaluation.compare_models --results-dir reports/results
+python -m src.evaluation.compare_models --results-dir reports/results/mendeley --figures-dir reports/figures/mendeley
 ```
 
-Metrics gom Accuracy, Precision, Recall, F1-score, ROC-AUC, Confusion Matrix, False Positive Rate, False Negative Rate.
+Metrics gom Accuracy, Precision, Recall, F1-score, ROC-AUC, Confusion Matrix, False Positive Rate, False Negative Rate va sklearn-style classification report theo tung class.
 
 ## Predict One URL
 
@@ -199,14 +353,16 @@ Server:
 http://127.0.0.1:8000
 ```
 
-Runtime uu tien model train tu Mendeley trong `models/saved/` theo thu tu:
+Runtime load cac model trong `models/saved/` va chon model kha dung co F1-score tot nhat tu:
 
 ```text
-dual_branch_cnn -> html_cnn -> url_cnn -> url_lstm -> baselines -> heuristic
+reports/results/mendeley/model_comparison.csv
 ```
+
+Neu khong co metrics/model trained, demo fallback ve heuristic URL + HTML rules.
 
 Moi lan predict duoc ghi vao:
 
 ```text
-reports/results/prediction_history.csv
+reports/results/mendeley/prediction_history.csv
 ```

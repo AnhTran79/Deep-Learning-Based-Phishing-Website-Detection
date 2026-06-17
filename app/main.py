@@ -15,7 +15,7 @@ from app.model import PhishingDetector
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 STATIC_DIR = PROJECT_ROOT / "app" / "static"
 INDEX_PATH = STATIC_DIR / "index.html"
-HISTORY_PATH = PROJECT_ROOT / "reports" / "results" / "prediction_history.csv"
+HISTORY_PATH = PROJECT_ROOT / "reports" / "results" / "mendeley" / "prediction_history.csv"
 
 app = FastAPI(title="Phishing Website Detection Demo", version="0.1.0")
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")

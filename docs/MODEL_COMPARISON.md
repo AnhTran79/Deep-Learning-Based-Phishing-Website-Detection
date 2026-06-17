@@ -26,14 +26,14 @@ Trong phishing detection, `Recall` cua class phishing rat quan trong vi bo sot p
 Ket qua ghi vao:
 
 ```text
-reports/results/model_comparison.csv
+reports/results/mendeley/model_comparison.csv
 ```
 
 Figure ghi vao:
 
 ```text
-reports/figures/confusion_matrix_<model>.png
-reports/figures/roc_curve_<model>.png
+reports/figures/mendeley/confusion_matrix_<model>.png
+reports/figures/mendeley/roc_curve_<model>.png
 ```
 
 Neu artifact chua co `models/saved/html_cnn.pt` hoac `models/saved/dual_branch_cnn.pt`, khong nen noi model da hoc HTML deep learning that su. Luc do demo chi dang dung baseline hoac heuristic fallback.

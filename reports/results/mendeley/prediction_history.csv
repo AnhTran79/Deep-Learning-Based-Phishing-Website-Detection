@@ -1,0 +1,3 @@
+timestamp_utc,url,label,confidence,phishing_probability,model_source,html_available
+2026-05-28T12:55:50.665792+00:00,https://secure-login-paypal.example.com/update/account,phishing,0.8577,0.8577,baseline_tfidf_logreg,False
+2026-05-28T12:59:09.582821+00:00,https://www.facebook.com/,legitimate,0.7141,0.2859,baseline_tfidf_logreg,False
