@@ -8,6 +8,7 @@ joblib==1.4.2
 matplotlib==3.10.0
 pandas==2.2.3
 pillow==11.0.0
+playwright==1.52.0
 requests==2.32.3
 beautifulsoup4==4.12.3
 pyyaml==6.0.2

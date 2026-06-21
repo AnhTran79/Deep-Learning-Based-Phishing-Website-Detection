@@ -1,0 +1,5 @@
+model,label,precision,recall,f1-score,support
+phish360_tri_branch_cnn,legitimate,0.7804878048780488,0.64,0.7032967032967034,50
+phish360_tri_branch_cnn,phishing,0.6949152542372882,0.82,0.7522935779816514,50
+phish360_tri_branch_cnn,macro avg,0.7377015295576685,0.73,0.7277951406391774,100
+phish360_tri_branch_cnn,weighted avg,0.7377015295576684,0.73,0.7277951406391773,100

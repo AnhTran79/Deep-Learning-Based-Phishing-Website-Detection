@@ -366,3 +366,129 @@ Moi lan predict duoc ghi vao:
 ```text
 reports/results/mendeley/prediction_history.csv
 ```
+
+## External Test Dataset (Khong Dung De Train)
+
+Pipeline `collect_external_dataset.py` tao tap external test rieng gom URL sau redirect,
+raw HTML va screenshot trong cung mot lan truy cap Playwright. Tap nay chi duoc dung
+de danh gia external; khong dung cho train, validation, chon model hoac chinh threshold.
+
+Setup Chromium mot lan:
+
+```bash
+pip install -r requirements.txt
+playwright install chromium
+```
+
+Neu Chromium download khong kha dung nhung may da cai Chrome hoac Edge, them
+`--browser-channel chrome` hoac `--browser-channel msedge`.
+
+Vi du voi CSV co cot `url,label` va `0 = legitimate`, `1 = phishing`:
+
+```bash
+python collect_external_dataset.py ^
+  --input urls.csv ^
+  --output data/external_test/dataset_50 ^
+  --legitimate-count 25 ^
+  --phishing-count 25 ^
+  --source kaggle ^
+  --headless ^
+  --zip
+```
+
+Dataset Kaggle `phishing_site_urls.csv` dung cot `URL,Label` va nhan `good,bad`:
+
+```bash
+python collect_external_dataset.py ^
+  --input "C:\path\phishing_site_urls.csv" ^
+  --url-column URL ^
+  --label-column Label ^
+  --source kaggle ^
+  --headless ^
+  --zip
+```
+
+Tranco `top-1m.csv` khong co header va co schema `rank,domain`. Tat ca domain
+Tranco chi duoc gan nhan legitimate:
+
+```bash
+python collect_external_dataset.py ^
+  --input "C:\path\top-1m.csv" ^
+  --input-format tranco ^
+  --output data/external_test/tranco_legitimate ^
+  --legitimate-count 25 ^
+  --phishing-count 0 ^
+  --max-input-rows 50000 ^
+  --source tranco ^
+  --browser-channel chrome ^
+  --headless
+```
+
+Tranco khong cung cap phishing. De tao tap external 25/25, can thu thap 25
+phishing tu mot nguon phishing cap nhat vao output rieng hoac mot buoc merge
+co kiem tra leakage; khong duoc gan nhan phishing cho domain Tranco.
+
+Pipeline mac dinh:
+
+- Thu thap den khi du 25 legitimate va 25 phishing; URL loi se bi ghi vao
+  `rejected_samples.csv` va pipeline tiep tuc.
+- Ho tro `--timeout-ms`, `--retries`, `--random-state`, `--resume` va tuy chinh
+  mapping label qua `--legitimate-values`, `--phishing-values`.
+- Loai URL, SHA-256 HTML va screenshot dHash trung/gan trung voi Mendeley,
+  Phish360 va cac sample external da chap nhan.
+- Loai domain phishing da co trong Phish360 `trainval` theo mac dinh.
+- Chan popup, download, media va browser permissions khong can thiet; khong co
+  buoc dang nhap.
+- Browser context la tam thoi. Service worker duoc cho phep mac dinh de render
+  dung cac trang IPFS; co the chan bang `--service-workers block`.
+- Loai cac trang loi browser/gateway, 404, access denied va domain parking
+  pho bien thay vi nhan chung thanh sample hop le.
+- Ghi `collection_results.csv`, `rejected_samples.csv`, `dataset_summary.json`
+  va chi tao `dataset_50.zip` khi du quota.
+
+Smoke test gioi han, khong crawl du 50:
+
+```bash
+python collect_external_dataset.py ^
+  --input urls.csv ^
+  --legitimate-count 1 ^
+  --phishing-count 1 ^
+  --max-candidates 4 ^
+  --output data/external_test/smoke
+```
+
+## External Evaluation
+
+Dataset external chi dung inference, khong train lai, khong chon model va khong
+chinh threshold:
+
+```bash
+python evaluate_external_dataset.py ^
+  --dataset data/external_test/dataset_100_clean
+```
+
+Chi danh gia model dung dong thoi URL + HTML + Screenshot:
+
+```bash
+python evaluate_external_dataset.py ^
+  --dataset data/external_test/dataset_100_clean ^
+  --models phish360_tri_branch_cnn
+```
+
+Script danh gia tat ca model Mendeley va Phish360 da luu, dung threshold trong
+checkpoint (`0.5` cho baseline joblib), va ghi ket qua rieng:
+
+```text
+reports/results/external_test/
+  predictions.csv
+  misclassifications.csv
+  model_comparison.csv
+  classification_reports.csv
+  classification_report_<model>.txt
+  evaluation_summary.json
+
+reports/figures/external_test/
+  confusion_matrix_<model>.png
+  roc_curve_<model>.png
+  external_model_comparison_metrics.png
+```

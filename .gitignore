@@ -11,6 +11,7 @@ __pycache__/
 artifacts/*.pkl
 chart/
 data/external/
+data/external_test/
 data/raw/
 data/processed/*.csv
 data/processed/*.csv.gz
