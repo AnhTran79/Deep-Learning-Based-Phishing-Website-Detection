@@ -1,6 +1,6 @@
-# Deep Learning-Based Phishing Website Detection
+# Multimodal Phishing Website Detection
 
-Project phat hien website phishing bang hoc sau.
+Project phat hien website phishing bang deep learning, ho tro cac dau vao URL, HTML source code va screenshot.
 
 Project hien co 2 luong huan luyen rieng:
 

@@ -16,8 +16,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 STATIC_DIR = PROJECT_ROOT / "app" / "static"
 INDEX_PATH = STATIC_DIR / "index.html"
 HISTORY_PATH = PROJECT_ROOT / "reports" / "results" / "mendeley" / "prediction_history.csv"
+PROJECT_NAME = "Multimodal Phishing Website Detection"
 
-app = FastAPI(title="Phishing Website Detection Demo", version="0.1.0")
+app = FastAPI(title=PROJECT_NAME, version="0.1.0")
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 detector = PhishingDetector()

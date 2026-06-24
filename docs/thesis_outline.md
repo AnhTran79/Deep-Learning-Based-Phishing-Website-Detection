@@ -1,6 +1,6 @@
 # Thesis Outline
 
-Suggested title: **Deep Learning-Based Phishing Website Detection using URL and HTML Source Code**.
+Suggested title: **Multimodal Phishing Website Detection using URL, HTML Source Code, and Screenshot Features**.
 
 ## 1. Introduction
 
