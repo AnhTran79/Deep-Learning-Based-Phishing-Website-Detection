@@ -1,0 +1,186 @@
+{
+  "results_dir": "reports\\results\\external_test",
+  "output_dir": "reports\\results\\external_test\\error_analysis",
+  "models": 6,
+  "samples": 100,
+  "hardest_samples": [
+    {
+      "sample_id": "L00008_legitimate",
+      "true_label": 0,
+      "wrong_models": 6,
+      "total_models": 6,
+      "domain": "volnalink.uk",
+      "source": "weekly_feed",
+      "wrong_model_names": "phish360_url_cnn; phish360_url_lstm; phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_url_cnn=0.5873; phish360_url_lstm=0.9048; phish360_html_cnn=0.9441; phish360_screenshot_cnn=0.9654; phish360_dual_branch_cnn=0.9768; phish360_tri_branch_cnn=0.9941",
+      "url": "https://volnalink.uk/auth/login"
+    },
+    {
+      "sample_id": "L00039_legitimate",
+      "true_label": 0,
+      "wrong_models": 5,
+      "total_models": 6,
+      "domain": "famu.jp",
+      "source": "weekly_feed",
+      "wrong_model_names": "phish360_url_cnn; phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_url_cnn=0.9414; phish360_html_cnn=0.6860; phish360_screenshot_cnn=0.9899; phish360_dual_branch_cnn=0.8225; phish360_tri_branch_cnn=0.8886",
+      "url": "https://famu.jp/"
+    },
+    {
+      "sample_id": "L00009_legitimate",
+      "true_label": 0,
+      "wrong_models": 4,
+      "total_models": 6,
+      "domain": "www.showpm.in",
+      "source": "weekly_feed",
+      "wrong_model_names": "phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_html_cnn=0.8916; phish360_screenshot_cnn=0.8359; phish360_dual_branch_cnn=0.7579; phish360_tri_branch_cnn=0.7730",
+      "url": "https://www.showpm.in/"
+    },
+    {
+      "sample_id": "L00028_legitimate",
+      "true_label": 0,
+      "wrong_models": 4,
+      "total_models": 6,
+      "domain": "rivegauche.ru",
+      "source": "weekly_feed",
+      "wrong_model_names": "phish360_url_cnn; phish360_html_cnn; phish360_screenshot_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_url_cnn=0.9207; phish360_html_cnn=0.8538; phish360_screenshot_cnn=0.9843; phish360_tri_branch_cnn=0.9449",
+      "url": "https://rivegauche.ru/"
+    },
+    {
+      "sample_id": "P00030_phishing",
+      "true_label": 1,
+      "wrong_models": 4,
+      "total_models": 6,
+      "domain": "www.roblox.com.et",
+      "source": "weekly_feed",
+      "wrong_model_names": "phish360_url_cnn; phish360_url_lstm; phish360_html_cnn; phish360_dual_branch_cnn",
+      "wrong_probabilities": "phish360_url_cnn=0.0000; phish360_url_lstm=0.1130; phish360_html_cnn=0.0656; phish360_dual_branch_cnn=0.3397",
+      "url": "https://www.roblox.com.et/games/71600459831333/Street-Life-Remastered?privateServerLinkCode=19696371439770339491581196338406"
+    },
+    {
+      "sample_id": "P00045_phishing",
+      "true_label": 1,
+      "wrong_models": 4,
+      "total_models": 6,
+      "domain": "www.oceancertsurveyors.com",
+      "source": "weekly_feed",
+      "wrong_model_names": "phish360_url_cnn; phish360_url_lstm; phish360_dual_branch_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_url_cnn=0.0000; phish360_url_lstm=0.0126; phish360_dual_branch_cnn=0.0109; phish360_tri_branch_cnn=0.2046",
+      "url": "https://www.oceancertsurveyors.com/"
+    },
+    {
+      "sample_id": "L00006_legitimate",
+      "true_label": 0,
+      "wrong_models": 3,
+      "total_models": 6,
+      "domain": "lumalabs.ai",
+      "source": "weekly_feed",
+      "wrong_model_names": "phish360_html_cnn; phish360_screenshot_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_html_cnn=0.9720; phish360_screenshot_cnn=0.8520; phish360_tri_branch_cnn=0.7631",
+      "url": "https://lumalabs.ai/"
+    },
+    {
+      "sample_id": "L00014_legitimate",
+      "true_label": 0,
+      "wrong_models": 3,
+      "total_models": 6,
+      "domain": "www.wps.cn",
+      "source": "weekly_feed",
+      "wrong_model_names": "phish360_html_cnn; phish360_screenshot_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_html_cnn=0.9574; phish360_screenshot_cnn=0.8490; phish360_tri_branch_cnn=0.5195",
+      "url": "https://www.wps.cn/"
+    },
+    {
+      "sample_id": "L00016_legitimate",
+      "true_label": 0,
+      "wrong_models": 3,
+      "total_models": 6,
+      "domain": "streamate.com",
+      "source": "weekly_feed",
+      "wrong_model_names": "phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn",
+      "wrong_probabilities": "phish360_html_cnn=0.9186; phish360_screenshot_cnn=0.5464; phish360_dual_branch_cnn=0.9301",
+      "url": "https://streamate.com/"
+    },
+    {
+      "sample_id": "L00029_legitimate",
+      "true_label": 0,
+      "wrong_models": 3,
+      "total_models": 6,
+      "domain": "teamtreehouse.com",
+      "source": "weekly_feed",
+      "wrong_model_names": "phish360_html_cnn; phish360_screenshot_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_html_cnn=0.9605; phish360_screenshot_cnn=0.7926; phish360_tri_branch_cnn=0.7522",
+      "url": "https://teamtreehouse.com/"
+    }
+  ],
+  "model_error_summary": [
+    {
+      "model": "phish360_dual_branch_cnn",
+      "input": "URL + HTML",
+      "samples": 100,
+      "wrong": 17,
+      "false_positives_legit_as_phish": 7,
+      "false_negatives_phish_as_legit": 10,
+      "near_threshold_wrong_pm_0_1": 2,
+      "false_positive_domains": "volnalink.uk; www.showpm.in; streamate.com; riftskygames.com; famu.jp; laser247.pro; abcnews.com",
+      "false_negative_domains": "lovely-emerald-chihuahua.31-22-7-7.cpanel.site; 97ee7.catex.at; instagram-clone-teal-five.vercel.app; trezor-suite-connect-en.typedream.app; web-git-brnunes-web-auction-allow-sepolia-uniswap.vercel.app; www.roblox.com.et; igsorteofifa2026.registo-seguro.com; arshina896.github.io"
+    },
+    {
+      "model": "phish360_html_cnn",
+      "input": "HTML",
+      "samples": 100,
+      "wrong": 38,
+      "false_positives_legit_as_phish": 32,
+      "false_negatives_phish_as_legit": 6,
+      "near_threshold_wrong_pm_0_1": 5,
+      "false_positive_domains": "netbsd.org; www.747live.bet; drift-pixel.ai; lumalabs.ai; www.pair.com; volnalink.uk; www.showpm.in; www.kugou.com",
+      "false_negative_domains": "lovely-emerald-chihuahua.31-22-7-7.cpanel.site; eugene59779.softr.app; www.roblox.com.et; dpdsuivicolisschweiz.vercel.app; igsorteofifa2026.registo-seguro.com; 1188xinpujing.com"
+    },
+    {
+      "model": "phish360_screenshot_cnn",
+      "input": "Screenshot",
+      "samples": 100,
+      "wrong": 35,
+      "false_positives_legit_as_phish": 30,
+      "false_negatives_phish_as_legit": 5,
+      "near_threshold_wrong_pm_0_1": 8,
+      "false_positive_domains": "netbsd.org; www.legoland.com; drift-pixel.ai; lumalabs.ai; www.pair.com; volnalink.uk; www.showpm.in; www.kugou.com",
+      "false_negative_domains": "krist222.github.io; reqnosa.com; kunwardev0210.github.io; anshu01maan-ux.github.io; amarsahu21724-max.github.io"
+    },
+    {
+      "model": "phish360_tri_branch_cnn",
+      "input": "URL + HTML + Screenshot",
+      "samples": 100,
+      "wrong": 18,
+      "false_positives_legit_as_phish": 17,
+      "false_negatives_phish_as_legit": 1,
+      "near_threshold_wrong_pm_0_1": 4,
+      "false_positive_domains": "lumalabs.ai; volnalink.uk; www.showpm.in; newtalk.tw; www.wps.cn; www.businessday.co.za; www.njuskalo.hr; lucky.net",
+      "false_negative_domains": "www.oceancertsurveyors.com"
+    },
+    {
+      "model": "phish360_url_cnn",
+      "input": "URL",
+      "samples": 100,
+      "wrong": 21,
+      "false_positives_legit_as_phish": 4,
+      "false_negatives_phish_as_legit": 17,
+      "near_threshold_wrong_pm_0_1": 1,
+      "false_positive_domains": "volnalink.uk; rivegauche.ru; famu.jp; easy-slot666.pages.dev",
+      "false_negative_domains": "krist222.github.io; lovely-emerald-chihuahua.31-22-7-7.cpanel.site; 97ee7.catex.at; dicepencilpaper.com; z-maniac-sidd.github.io; nishkarsh71.github.io; kunwardev0210.github.io; himanshu-kamboz.github.io"
+    },
+    {
+      "model": "phish360_url_lstm",
+      "input": "URL",
+      "samples": 100,
+      "wrong": 19,
+      "false_positives_legit_as_phish": 6,
+      "false_negatives_phish_as_legit": 13,
+      "near_threshold_wrong_pm_0_1": 2,
+      "false_positive_domains": "volnalink.uk; animevietsub.pl; customer.io; 192-168-1-1ip.mobi; laser247.pro; easy-slot666.pages.dev",
+      "false_negative_domains": "krist222.github.io; nishkarsh71.github.io; himanshu-kamboz.github.io; www.roblox.com.et; dpdsuivicolisschweiz.vercel.app; igsorteofifa2026.registo-seguro.com; petsrblx.blogspot.com; arshina896.github.io"
+    }
+  ]
+}

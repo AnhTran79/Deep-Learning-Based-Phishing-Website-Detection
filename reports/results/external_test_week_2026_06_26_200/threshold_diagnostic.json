@@ -1,0 +1,137 @@
+{
+  "threshold_source": "reports\\results\\external_test_week_2026_06_26_200\\predictions.csv",
+  "intended_use": "validation-calibrated threshold overrides; do not calibrate on final external test",
+  "objective": "f1",
+  "step": 0.01,
+  "min_recall": 0.0,
+  "max_false_positive_rate": null,
+  "output": "reports\\results\\external_test_week_2026_06_26_200\\threshold_diagnostic.json",
+  "models": {
+    "phish360_dual_branch_cnn": {
+      "threshold": 0.09,
+      "accuracy": 0.8375,
+      "precision": 0.8534031413612565,
+      "recall": 0.815,
+      "specificity": 0.86,
+      "f1": 0.8337595907928387,
+      "false_positive_rate": 0.14,
+      "false_negative_rate": 0.185,
+      "confusion_matrix": [
+        [
+          172,
+          28
+        ],
+        [
+          37,
+          163
+        ]
+      ],
+      "constraints_satisfied": true
+    },
+    "phish360_html_cnn": {
+      "threshold": 0.01,
+      "accuracy": 0.7725,
+      "precision": 0.7711442786069652,
+      "recall": 0.775,
+      "specificity": 0.77,
+      "f1": 0.773067331670823,
+      "false_positive_rate": 0.23,
+      "false_negative_rate": 0.225,
+      "confusion_matrix": [
+        [
+          154,
+          46
+        ],
+        [
+          45,
+          155
+        ]
+      ],
+      "constraints_satisfied": true
+    },
+    "phish360_screenshot_cnn": {
+      "threshold": 0.39,
+      "accuracy": 0.695,
+      "precision": 0.6652542372881356,
+      "recall": 0.785,
+      "specificity": 0.605,
+      "f1": 0.7201834862385321,
+      "false_positive_rate": 0.395,
+      "false_negative_rate": 0.215,
+      "confusion_matrix": [
+        [
+          121,
+          79
+        ],
+        [
+          43,
+          157
+        ]
+      ],
+      "constraints_satisfied": true
+    },
+    "phish360_tri_branch_cnn": {
+      "threshold": 0.26,
+      "accuracy": 0.84,
+      "precision": 0.8655913978494624,
+      "recall": 0.805,
+      "specificity": 0.875,
+      "f1": 0.8341968911917099,
+      "false_positive_rate": 0.125,
+      "false_negative_rate": 0.195,
+      "confusion_matrix": [
+        [
+          175,
+          25
+        ],
+        [
+          39,
+          161
+        ]
+      ],
+      "constraints_satisfied": true
+    },
+    "phish360_url_cnn": {
+      "threshold": 0.16,
+      "accuracy": 0.88,
+      "precision": 0.9130434782608695,
+      "recall": 0.84,
+      "specificity": 0.92,
+      "f1": 0.8749999999999999,
+      "false_positive_rate": 0.08,
+      "false_negative_rate": 0.16,
+      "confusion_matrix": [
+        [
+          184,
+          16
+        ],
+        [
+          32,
+          168
+        ]
+      ],
+      "constraints_satisfied": true
+    },
+    "phish360_url_lstm": {
+      "threshold": 0.15,
+      "accuracy": 0.885,
+      "precision": 0.8774509803921569,
+      "recall": 0.895,
+      "specificity": 0.875,
+      "f1": 0.886138613861386,
+      "false_positive_rate": 0.125,
+      "false_negative_rate": 0.105,
+      "confusion_matrix": [
+        [
+          175,
+          25
+        ],
+        [
+          21,
+          179
+        ]
+      ],
+      "constraints_satisfied": true
+    }
+  }
+}

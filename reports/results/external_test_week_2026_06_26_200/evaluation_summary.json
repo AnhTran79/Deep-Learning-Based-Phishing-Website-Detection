@@ -1,0 +1,16 @@
+{
+  "dataset": "data\\external_test\\week_2026_06_26_200",
+  "dataset_role": "external_test_only",
+  "samples": 400,
+  "label_counts": {
+    "legitimate": 200,
+    "phishing": 200
+  },
+  "models_evaluated": 6,
+  "threshold_policy": "saved model threshold; 0.5 for joblib baselines",
+  "training_performed": false,
+  "threshold_tuning_performed": false,
+  "threshold_overrides": "",
+  "best_external_model_by_f1": "phish360_url_lstm",
+  "best_external_f1": 0.8539944903581267
+}

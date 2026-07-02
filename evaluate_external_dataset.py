@@ -123,8 +123,9 @@ def load_external_records(root: Path, html_max_chars: int = 2000) -> list[Extern
                 )
             )
     records.sort(key=lambda record: record.sample_id)
-    if len(records) != 100 or {record.label for record in records} != {0, 1}:
-        raise ValueError(f"Expected a balanced 100-sample external set; got {len(records)} rows.")
+    label_counts = {label: sum(1 for record in records if record.label == label) for label in (0, 1)}
+    if label_counts[0] == 0 or label_counts[1] == 0 or label_counts[0] != label_counts[1]:
+        raise ValueError(f"Expected a balanced external set; got {label_counts}.")
     return records
 
 
@@ -249,6 +250,28 @@ def write_csv(path: Path, rows: list[dict], fieldnames: list[str]) -> None:
         writer.writerows(rows)
 
 
+def load_threshold_overrides(path_text: str) -> dict[str, float]:
+    if not path_text:
+        return {}
+    path = Path(path_text)
+    if not path.is_file():
+        raise FileNotFoundError(f"Threshold override file not found: {path}")
+    if path.suffix.lower() == ".json":
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if "models" in payload:
+            values = payload["models"]
+            return {
+                model: float(item["threshold"] if isinstance(item, dict) else item)
+                for model, item in values.items()
+            }
+        return {model: float(threshold) for model, threshold in payload.items()}
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        reader = csv.DictReader(handle)
+        if not reader.fieldnames or not {"model", "threshold"}.issubset(reader.fieldnames):
+            raise ValueError("Threshold CSV must contain model,threshold columns.")
+        return {row["model"]: float(row["threshold"]) for row in reader if row.get("model")}
+
+
 def selected_model_specs(model_names: list[str]) -> list[tuple[str, str, Path, str]]:
     if not model_names or model_names == ["all"]:
         return MODEL_SPECS
@@ -270,6 +293,7 @@ def evaluate(args: argparse.Namespace) -> list[dict]:
     predictions: list[dict] = []
     comparison: list[dict] = []
     internal = read_internal_metrics()
+    threshold_overrides = load_threshold_overrides(args.threshold_overrides)
 
     for family, model_name, relative_path, model_input in selected_model_specs(args.models):
         model_path = PROJECT_ROOT / relative_path
@@ -284,12 +308,15 @@ def evaluate(args: argparse.Namespace) -> list[dict]:
             artifact = build_torch_model(checkpoint)
             probabilities = predict_torch(artifact, records, args.batch_size)
             threshold = artifact["threshold"]
+        threshold_source = "override" if model_name in threshold_overrides else "checkpoint_or_default"
+        threshold = threshold_overrides.get(model_name, threshold)
         metrics = evaluate_binary_classification(labels, probabilities, threshold=threshold)
         row = {
             "model": model_name,
             "family": family,
             "input": model_input,
             "threshold": threshold,
+            "threshold_source": threshold_source,
             **metrics,
             "model_file": str(relative_path),
         }
@@ -312,6 +339,7 @@ def evaluate(args: argparse.Namespace) -> list[dict]:
                     "correct": int(prediction == record.label),
                     "phishing_probability": probability,
                     "threshold": threshold,
+                    "threshold_source": threshold_source,
                     "model": model_name,
                     "family": family,
                     "input": model_input,
@@ -339,6 +367,7 @@ def evaluate(args: argparse.Namespace) -> list[dict]:
         "family",
         "input",
         "threshold",
+        "threshold_source",
         "accuracy",
         "precision",
         "recall",
@@ -370,6 +399,7 @@ def evaluate(args: argparse.Namespace) -> list[dict]:
             "correct",
             "phishing_probability",
             "threshold",
+            "threshold_source",
             "model",
             "family",
             "input",
@@ -425,6 +455,7 @@ def evaluate(args: argparse.Namespace) -> list[dict]:
             "correct",
             "phishing_probability",
             "threshold",
+            "threshold_source",
             "model",
             "family",
             "input",
@@ -439,9 +470,14 @@ def evaluate(args: argparse.Namespace) -> list[dict]:
         "samples": len(records),
         "label_counts": {"legitimate": labels.count(0), "phishing": labels.count(1)},
         "models_evaluated": len(comparison),
-        "threshold_policy": "saved model threshold; 0.5 for joblib baselines",
+        "threshold_policy": (
+            f"threshold overrides from {args.threshold_overrides}; saved/default for missing models"
+            if threshold_overrides
+            else "saved model threshold; 0.5 for joblib baselines"
+        ),
         "training_performed": False,
-        "threshold_tuning_performed": False,
+        "threshold_tuning_performed": bool(threshold_overrides),
+        "threshold_overrides": args.threshold_overrides or "",
         "best_external_model_by_f1": comparison[0]["model"] if comparison else None,
         "best_external_f1": comparison[0]["f1"] if comparison else None,
     }
@@ -460,6 +496,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--figures-dir", default=str(DEFAULT_FIGURES))
     parser.add_argument("--html-max-chars", type=int, default=2000)
     parser.add_argument("--batch-size", type=int, default=16)
+    parser.add_argument(
+        "--threshold-overrides",
+        default="",
+        help="Optional JSON/CSV from calibrate_thresholds.py with model-specific thresholds.",
+    )
     parser.add_argument(
         "--models",
         nargs="+",

@@ -1,0 +1,13 @@
+model,source,true_label,samples,wrong,error_rate,top_wrong_domains
+phish360_dual_branch_cnn,weekly_feed_200,0,200,15,0.075,fakenews.win; fairplay24.win; csair.com; 3iskk.xyz; app.triptease.io; corp.logly.co.jp; rolexpanel.win; ilmanifesto.it
+phish360_dual_branch_cnn,weekly_feed_200,1,200,61,0.305,secure-trzo-start-us.square.site; nxvc.web.id; www.roblox.com.et; www.chilhoodgames.com; exciting-context-711590.framer.app; ubs-switzerland.onrender.com; like.do; microsoft-login-securitylogin.jimdofree.com
+phish360_html_cnn,weekly_feed_200,0,200,18,0.09,fakenews.win; fairplay24.win; www.imyfone.com; www.arabxn.com; qoder.com; rolexpanel.win; www.bahn.de; nzbgeek.info
+phish360_html_cnn,weekly_feed_200,1,200,97,0.485,allebilet.pl-oferta74hf84cf4.shop; secure-trzo-start-us.square.site; nxvc.web.id; fdsbu.forms.marketingsbu.com.uy; www.roblox.com.et; exciting-context-711590.framer.app; like.do; allegrolokalnie.lokalna-ofeta2356446.shop
+phish360_screenshot_cnn,weekly_feed_200,0,200,60,0.3,fakenews.win; coomer.st; lovdata.no; www.ytv.co.jp; app.triptease.io; blazingblog.com; indodax.com; www.imyfone.com
+phish360_screenshot_cnn,weekly_feed_200,1,200,71,0.355,shopee-day29.blogspot.com; secure-trzo-start-us.square.site; nxvc.web.id; allegrolokalnie.lokalna-ofeta2356446.shop; www.myfidelitysite.com; nitinbhas001.github.io; gopalx235.github.io; khushiish11.github.io
+phish360_tri_branch_cnn,weekly_feed_200,0,200,21,0.105,fakenews.win; app.triptease.io; corp.logly.co.jp; www.imyfone.com; gamebanana.com; beta.gouv.fr; rolexpanel.win; videeyli.space
+phish360_tri_branch_cnn,weekly_feed_200,1,200,43,0.215,shopee-day29.blogspot.com; secure-trzo-start-us.square.site; www.chilhoodgames.com; exciting-context-711590.framer.app; microsoft-login-securitylogin.jimdofree.com; www.myfidelitysite.com; plataformadevibraofitnessmultifuncional.lovable.app; www.bancolombia.com
+phish360_url_cnn,weekly_feed_200,0,200,9,0.045,fairplay24.win; 3iskk.xyz; gamebanana.com; rolexpanel.win; agency.nota.media; sfsforum.com; researcher.life; nzbgeek.info
+phish360_url_cnn,weekly_feed_200,1,200,56,0.28,www.chilhoodgames.com; exciting-context-711590.framer.app; ubs-switzerland.onrender.com; like.do; binance-1-2-11-uniswap.vercel.app; www.myfidelitysite.com; nitinbhas001.github.io; chat-whatsapp-dpq6287j4fei.edgeone.dev
+phish360_url_lstm,weekly_feed_200,0,200,8,0.04,csair.com; app.triptease.io; corp.logly.co.jp; www.helvetia.com; sase.checkpoint.com; ars.electronica.art; auth.clickhouse.cloud; wavebrowserbase.com
+phish360_url_lstm,weekly_feed_200,1,200,45,0.225,www.roblox.com.et; www.chilhoodgames.com; ubs-switzerland.onrender.com; like.do; binance-1-2-11-uniswap.vercel.app; www.myfidelitysite.com; 97ee6.catex.at; www.bancolombia.com

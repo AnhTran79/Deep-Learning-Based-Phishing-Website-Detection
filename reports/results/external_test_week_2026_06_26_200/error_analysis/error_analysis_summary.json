@@ -1,0 +1,186 @@
+{
+  "results_dir": "reports\\results\\external_test_week_2026_06_26_200",
+  "output_dir": "reports\\results\\external_test_week_2026_06_26_200\\error_analysis",
+  "models": 6,
+  "samples": 400,
+  "hardest_samples": [
+    {
+      "sample_id": "L00115_legitimate",
+      "true_label": 0,
+      "wrong_models": 6,
+      "total_models": 6,
+      "domain": "auth.clickhouse.cloud",
+      "source": "weekly_feed_200",
+      "wrong_model_names": "phish360_url_cnn; phish360_url_lstm; phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_url_cnn=0.9997; phish360_url_lstm=0.9926; phish360_html_cnn=0.9812; phish360_screenshot_cnn=0.8170; phish360_dual_branch_cnn=0.9998; phish360_tri_branch_cnn=1.0000",
+      "url": "https://auth.clickhouse.cloud/u/login/identifier?state=hKFo2SBCbm8tQ2cyOEp1NVdlTkhBZFZxc3JoV0swSmJDMm1jU6Fur3VuaXZlcnNhbC1sb2dpbqN0aWTZIEx0SkgxSnRnemdhZ29Wc0poSllXTFJ4Rm8yRVlJR0Zho2NpZNkgSVBwSDRSTkQwcU5YSFZheWVwZmZnc0dwYlhRbUZpa3I"
+    },
+    {
+      "sample_id": "P00052_phishing",
+      "true_label": 1,
+      "wrong_models": 6,
+      "total_models": 6,
+      "domain": "hg88685.com",
+      "source": "weekly_feed_200",
+      "wrong_model_names": "phish360_url_cnn; phish360_url_lstm; phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_url_cnn=0.1033; phish360_url_lstm=0.1584; phish360_html_cnn=0.0001; phish360_screenshot_cnn=0.4753; phish360_dual_branch_cnn=0.0444; phish360_tri_branch_cnn=0.0000",
+      "url": "https://hg88685.com/"
+    },
+    {
+      "sample_id": "P00063_phishing",
+      "true_label": 1,
+      "wrong_models": 6,
+      "total_models": 6,
+      "domain": "fortysc.live",
+      "source": "weekly_feed_200",
+      "wrong_model_names": "phish360_url_cnn; phish360_url_lstm; phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_url_cnn=0.2869; phish360_url_lstm=0.0108; phish360_html_cnn=0.0870; phish360_screenshot_cnn=0.3927; phish360_dual_branch_cnn=0.1504; phish360_tri_branch_cnn=0.0102",
+      "url": "https://fortysc.live/"
+    },
+    {
+      "sample_id": "P00082_phishing",
+      "true_label": 1,
+      "wrong_models": 6,
+      "total_models": 6,
+      "domain": "lzstructure.com",
+      "source": "weekly_feed_200",
+      "wrong_model_names": "phish360_url_cnn; phish360_url_lstm; phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_url_cnn=0.0046; phish360_url_lstm=0.0450; phish360_html_cnn=0.0000; phish360_screenshot_cnn=0.4544; phish360_dual_branch_cnn=0.0009; phish360_tri_branch_cnn=0.0005",
+      "url": "https://lzstructure.com/"
+    },
+    {
+      "sample_id": "P00090_phishing",
+      "true_label": 1,
+      "wrong_models": 6,
+      "total_models": 6,
+      "domain": "fort-check.info",
+      "source": "weekly_feed_200",
+      "wrong_model_names": "phish360_url_cnn; phish360_url_lstm; phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_url_cnn=0.1064; phish360_url_lstm=0.0928; phish360_html_cnn=0.0649; phish360_screenshot_cnn=0.0272; phish360_dual_branch_cnn=0.0596; phish360_tri_branch_cnn=0.0000",
+      "url": "https://fort-check.info/"
+    },
+    {
+      "sample_id": "P00093_phishing",
+      "true_label": 1,
+      "wrong_models": 6,
+      "total_models": 6,
+      "domain": "www.060827.com",
+      "source": "weekly_feed_200",
+      "wrong_model_names": "phish360_url_cnn; phish360_url_lstm; phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_url_cnn=0.0451; phish360_url_lstm=0.0366; phish360_html_cnn=0.0019; phish360_screenshot_cnn=0.1284; phish360_dual_branch_cnn=0.2423; phish360_tri_branch_cnn=0.0010",
+      "url": "https://www.060827.com/#/"
+    },
+    {
+      "sample_id": "P00168_phishing",
+      "true_label": 1,
+      "wrong_models": 6,
+      "total_models": 6,
+      "domain": "www.crone-bet365.com.cn",
+      "source": "weekly_feed_200",
+      "wrong_model_names": "phish360_url_cnn; phish360_url_lstm; phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_url_cnn=0.0026; phish360_url_lstm=0.0809; phish360_html_cnn=0.0000; phish360_screenshot_cnn=0.3102; phish360_dual_branch_cnn=0.0065; phish360_tri_branch_cnn=0.0001",
+      "url": "https://www.crone-bet365.com.cn/"
+    },
+    {
+      "sample_id": "P00171_phishing",
+      "true_label": 1,
+      "wrong_models": 6,
+      "total_models": 6,
+      "domain": "webstartpublic.framer.media",
+      "source": "weekly_feed_200",
+      "wrong_model_names": "phish360_url_cnn; phish360_url_lstm; phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_url_cnn=0.1248; phish360_url_lstm=0.0262; phish360_html_cnn=0.0000; phish360_screenshot_cnn=0.0026; phish360_dual_branch_cnn=0.0541; phish360_tri_branch_cnn=0.0000",
+      "url": "https://webstartpublic.framer.media/"
+    },
+    {
+      "sample_id": "P00197_phishing",
+      "true_label": 1,
+      "wrong_models": 6,
+      "total_models": 6,
+      "domain": "blogskub.com",
+      "source": "weekly_feed_200",
+      "wrong_model_names": "phish360_url_cnn; phish360_url_lstm; phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_url_cnn=0.0237; phish360_url_lstm=0.2839; phish360_html_cnn=0.1014; phish360_screenshot_cnn=0.2194; phish360_dual_branch_cnn=0.1004; phish360_tri_branch_cnn=0.0413",
+      "url": "https://blogskub.com/en/deleted?code=ITQsm7"
+    },
+    {
+      "sample_id": "L00051_legitimate",
+      "true_label": 0,
+      "wrong_models": 5,
+      "total_models": 6,
+      "domain": "rolexpanel.win",
+      "source": "weekly_feed_200",
+      "wrong_model_names": "phish360_url_cnn; phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn",
+      "wrong_probabilities": "phish360_url_cnn=0.6570; phish360_html_cnn=0.9978; phish360_screenshot_cnn=0.8736; phish360_dual_branch_cnn=0.9350; phish360_tri_branch_cnn=1.0000",
+      "url": "https://rolexpanel.win/login"
+    }
+  ],
+  "model_error_summary": [
+    {
+      "model": "phish360_dual_branch_cnn",
+      "input": "URL + HTML",
+      "samples": 400,
+      "wrong": 76,
+      "false_positives_legit_as_phish": 15,
+      "false_negatives_phish_as_legit": 61,
+      "near_threshold_wrong_pm_0_1": 3,
+      "false_positive_domains": "fakenews.win; fairplay24.win; csair.com; 3iskk.xyz; app.triptease.io; corp.logly.co.jp; rolexpanel.win; ilmanifesto.it",
+      "false_negative_domains": "secure-trzo-start-us.square.site; nxvc.web.id; www.roblox.com.et; www.chilhoodgames.com; exciting-context-711590.framer.app; ubs-switzerland.onrender.com; like.do; microsoft-login-securitylogin.jimdofree.com"
+    },
+    {
+      "model": "phish360_html_cnn",
+      "input": "HTML",
+      "samples": 400,
+      "wrong": 115,
+      "false_positives_legit_as_phish": 18,
+      "false_negatives_phish_as_legit": 97,
+      "near_threshold_wrong_pm_0_1": 6,
+      "false_positive_domains": "fakenews.win; fairplay24.win; www.imyfone.com; www.arabxn.com; qoder.com; rolexpanel.win; www.bahn.de; nzbgeek.info",
+      "false_negative_domains": "allebilet.pl-oferta74hf84cf4.shop; secure-trzo-start-us.square.site; nxvc.web.id; fdsbu.forms.marketingsbu.com.uy; www.roblox.com.et; exciting-context-711590.framer.app; like.do; allegrolokalnie.lokalna-ofeta2356446.shop"
+    },
+    {
+      "model": "phish360_screenshot_cnn",
+      "input": "Screenshot",
+      "samples": 400,
+      "wrong": 131,
+      "false_positives_legit_as_phish": 60,
+      "false_negatives_phish_as_legit": 71,
+      "near_threshold_wrong_pm_0_1": 38,
+      "false_positive_domains": "fakenews.win; coomer.st; lovdata.no; www.ytv.co.jp; app.triptease.io; blazingblog.com; indodax.com; www.imyfone.com",
+      "false_negative_domains": "shopee-day29.blogspot.com; secure-trzo-start-us.square.site; nxvc.web.id; allegrolokalnie.lokalna-ofeta2356446.shop; www.myfidelitysite.com; nitinbhas001.github.io; gopalx235.github.io; khushiish11.github.io"
+    },
+    {
+      "model": "phish360_tri_branch_cnn",
+      "input": "URL + HTML + Screenshot",
+      "samples": 400,
+      "wrong": 64,
+      "false_positives_legit_as_phish": 21,
+      "false_negatives_phish_as_legit": 43,
+      "near_threshold_wrong_pm_0_1": 3,
+      "false_positive_domains": "fakenews.win; app.triptease.io; corp.logly.co.jp; www.imyfone.com; gamebanana.com; beta.gouv.fr; rolexpanel.win; videeyli.space",
+      "false_negative_domains": "shopee-day29.blogspot.com; secure-trzo-start-us.square.site; www.chilhoodgames.com; exciting-context-711590.framer.app; microsoft-login-securitylogin.jimdofree.com; www.myfidelitysite.com; plataformadevibraofitnessmultifuncional.lovable.app; www.bancolombia.com"
+    },
+    {
+      "model": "phish360_url_cnn",
+      "input": "URL",
+      "samples": 400,
+      "wrong": 65,
+      "false_positives_legit_as_phish": 9,
+      "false_negatives_phish_as_legit": 56,
+      "near_threshold_wrong_pm_0_1": 6,
+      "false_positive_domains": "fairplay24.win; 3iskk.xyz; gamebanana.com; rolexpanel.win; agency.nota.media; sfsforum.com; researcher.life; nzbgeek.info",
+      "false_negative_domains": "www.chilhoodgames.com; exciting-context-711590.framer.app; ubs-switzerland.onrender.com; like.do; binance-1-2-11-uniswap.vercel.app; www.myfidelitysite.com; nitinbhas001.github.io; chat-whatsapp-dpq6287j4fei.edgeone.dev"
+    },
+    {
+      "model": "phish360_url_lstm",
+      "input": "URL",
+      "samples": 400,
+      "wrong": 53,
+      "false_positives_legit_as_phish": 8,
+      "false_negatives_phish_as_legit": 45,
+      "near_threshold_wrong_pm_0_1": 10,
+      "false_positive_domains": "csair.com; app.triptease.io; corp.logly.co.jp; www.helvetia.com; sase.checkpoint.com; ars.electronica.art; auth.clickhouse.cloud; wavebrowserbase.com",
+      "false_negative_domains": "www.roblox.com.et; www.chilhoodgames.com; ubs-switzerland.onrender.com; like.do; binance-1-2-11-uniswap.vercel.app; www.myfidelitysite.com; 97ee6.catex.at; www.bancolombia.com"
+    }
+  ]
+}

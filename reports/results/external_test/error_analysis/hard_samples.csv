@@ -1,0 +1,75 @@
+sample_id,true_label,wrong_models,total_models,domain,source,wrong_model_names,wrong_probabilities,url
+L00008_legitimate,0,6,6,volnalink.uk,weekly_feed,phish360_url_cnn; phish360_url_lstm; phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn,phish360_url_cnn=0.5873; phish360_url_lstm=0.9048; phish360_html_cnn=0.9441; phish360_screenshot_cnn=0.9654; phish360_dual_branch_cnn=0.9768; phish360_tri_branch_cnn=0.9941,https://volnalink.uk/auth/login
+L00039_legitimate,0,5,6,famu.jp,weekly_feed,phish360_url_cnn; phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn,phish360_url_cnn=0.9414; phish360_html_cnn=0.6860; phish360_screenshot_cnn=0.9899; phish360_dual_branch_cnn=0.8225; phish360_tri_branch_cnn=0.8886,https://famu.jp/
+L00009_legitimate,0,4,6,www.showpm.in,weekly_feed,phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn,phish360_html_cnn=0.8916; phish360_screenshot_cnn=0.8359; phish360_dual_branch_cnn=0.7579; phish360_tri_branch_cnn=0.7730,https://www.showpm.in/
+L00028_legitimate,0,4,6,rivegauche.ru,weekly_feed,phish360_url_cnn; phish360_html_cnn; phish360_screenshot_cnn; phish360_tri_branch_cnn,phish360_url_cnn=0.9207; phish360_html_cnn=0.8538; phish360_screenshot_cnn=0.9843; phish360_tri_branch_cnn=0.9449,https://rivegauche.ru/
+P00030_phishing,1,4,6,www.roblox.com.et,weekly_feed,phish360_url_cnn; phish360_url_lstm; phish360_html_cnn; phish360_dual_branch_cnn,phish360_url_cnn=0.0000; phish360_url_lstm=0.1130; phish360_html_cnn=0.0656; phish360_dual_branch_cnn=0.3397,https://www.roblox.com.et/games/71600459831333/Street-Life-Remastered?privateServerLinkCode=19696371439770339491581196338406
+P00045_phishing,1,4,6,www.oceancertsurveyors.com,weekly_feed,phish360_url_cnn; phish360_url_lstm; phish360_dual_branch_cnn; phish360_tri_branch_cnn,phish360_url_cnn=0.0000; phish360_url_lstm=0.0126; phish360_dual_branch_cnn=0.0109; phish360_tri_branch_cnn=0.2046,https://www.oceancertsurveyors.com/
+L00006_legitimate,0,3,6,lumalabs.ai,weekly_feed,phish360_html_cnn; phish360_screenshot_cnn; phish360_tri_branch_cnn,phish360_html_cnn=0.9720; phish360_screenshot_cnn=0.8520; phish360_tri_branch_cnn=0.7631,https://lumalabs.ai/
+L00014_legitimate,0,3,6,www.wps.cn,weekly_feed,phish360_html_cnn; phish360_screenshot_cnn; phish360_tri_branch_cnn,phish360_html_cnn=0.9574; phish360_screenshot_cnn=0.8490; phish360_tri_branch_cnn=0.5195,https://www.wps.cn/
+L00016_legitimate,0,3,6,streamate.com,weekly_feed,phish360_html_cnn; phish360_screenshot_cnn; phish360_dual_branch_cnn,phish360_html_cnn=0.9186; phish360_screenshot_cnn=0.5464; phish360_dual_branch_cnn=0.9301,https://streamate.com/
+L00029_legitimate,0,3,6,teamtreehouse.com,weekly_feed,phish360_html_cnn; phish360_screenshot_cnn; phish360_tri_branch_cnn,phish360_html_cnn=0.9605; phish360_screenshot_cnn=0.7926; phish360_tri_branch_cnn=0.7522,https://teamtreehouse.com/
+L00043_legitimate,0,3,6,laser247.pro,weekly_feed,phish360_url_lstm; phish360_dual_branch_cnn; phish360_tri_branch_cnn,phish360_url_lstm=0.9795; phish360_dual_branch_cnn=0.9777; phish360_tri_branch_cnn=0.9667,https://laser247.pro/#/home
+L00044_legitimate,0,3,6,gov-murman.ru,weekly_feed,phish360_html_cnn; phish360_screenshot_cnn; phish360_tri_branch_cnn,phish360_html_cnn=0.9726; phish360_screenshot_cnn=0.9975; phish360_tri_branch_cnn=0.9898,https://gov-murman.ru/
+L00046_legitimate,0,3,6,easy-slot666.pages.dev,weekly_feed,phish360_url_cnn; phish360_url_lstm; phish360_html_cnn,phish360_url_cnn=0.9968; phish360_url_lstm=0.5712; phish360_html_cnn=0.7561,https://easy-slot666.pages.dev/
+L00047_legitimate,0,3,6,abcnews.com,weekly_feed,phish360_html_cnn; phish360_dual_branch_cnn; phish360_tri_branch_cnn,phish360_html_cnn=0.8888; phish360_dual_branch_cnn=0.9420; phish360_tri_branch_cnn=0.5559,https://abcnews.com/
+L00048_legitimate,0,3,6,playit.gg,weekly_feed,phish360_html_cnn; phish360_screenshot_cnn; phish360_tri_branch_cnn,phish360_html_cnn=0.9047; phish360_screenshot_cnn=0.6854; phish360_tri_branch_cnn=0.8508,https://playit.gg/
+P00001_phishing,1,3,6,krist222.github.io,weekly_feed,phish360_url_cnn; phish360_url_lstm; phish360_screenshot_cnn,phish360_url_cnn=0.1907; phish360_url_lstm=0.0515; phish360_screenshot_cnn=0.4627,https://krist222.github.io/project/
+P00004_phishing,1,3,6,lovely-emerald-chihuahua.31-22-7-7.cpanel.site,weekly_feed,phish360_url_cnn; phish360_html_cnn; phish360_dual_branch_cnn,phish360_url_cnn=0.0405; phish360_html_cnn=0.3812; phish360_dual_branch_cnn=0.2065,https://lovely-emerald-chihuahua.31-22-7-7.cpanel.site/exorsuis/
+P00032_phishing,1,3,6,igsorteofifa2026.registo-seguro.com,weekly_feed,phish360_url_lstm; phish360_html_cnn; phish360_dual_branch_cnn,phish360_url_lstm=0.2735; phish360_html_cnn=0.4658; phish360_dual_branch_cnn=0.1003,https://igsorteofifa2026.registo-seguro.com/
+P00046_phishing,1,3,6,1188xinpujing.com,weekly_feed,phish360_url_cnn; phish360_url_lstm; phish360_html_cnn,phish360_url_cnn=0.0683; phish360_url_lstm=0.0362; phish360_html_cnn=0.2744,https://1188xinpujing.com/
+P00049_phishing,1,3,6,onlines-kundendiensts.com,weekly_feed,phish360_url_cnn; phish360_url_lstm; phish360_dual_branch_cnn,phish360_url_cnn=0.0001; phish360_url_lstm=0.2777; phish360_dual_branch_cnn=0.3120,https://onlines-kundendiensts.com/
+L00002_legitimate,0,2,6,netbsd.org,weekly_feed,phish360_html_cnn; phish360_screenshot_cnn,phish360_html_cnn=0.5493; phish360_screenshot_cnn=0.5084,https://netbsd.org/
+L00005_legitimate,0,2,6,drift-pixel.ai,weekly_feed,phish360_html_cnn; phish360_screenshot_cnn,phish360_html_cnn=0.5959; phish360_screenshot_cnn=0.6795,https://drift-pixel.ai/
+L00007_legitimate,0,2,6,www.pair.com,weekly_feed,phish360_html_cnn; phish360_screenshot_cnn,phish360_html_cnn=0.9606; phish360_screenshot_cnn=0.6311,https://www.pair.com/
+L00011_legitimate,0,2,6,www.kugou.com,weekly_feed,phish360_html_cnn; phish360_screenshot_cnn,phish360_html_cnn=0.7966; phish360_screenshot_cnn=0.9322,https://www.kugou.com/
+L00012_legitimate,0,2,6,newtalk.tw,weekly_feed,phish360_screenshot_cnn; phish360_tri_branch_cnn,phish360_screenshot_cnn=0.5239; phish360_tri_branch_cnn=0.8862,https://newtalk.tw/
+L00017_legitimate,0,2,6,toto12orange.com,weekly_feed,phish360_html_cnn; phish360_screenshot_cnn,phish360_html_cnn=0.5035; phish360_screenshot_cnn=0.7094,https://toto12orange.com/
+L00019_legitimate,0,2,6,www.businessday.co.za,weekly_feed,phish360_screenshot_cnn; phish360_tri_branch_cnn,phish360_screenshot_cnn=0.6433; phish360_tri_branch_cnn=0.7417,https://www.businessday.co.za/
+L00020_legitimate,0,2,6,www.njuskalo.hr,weekly_feed,phish360_screenshot_cnn; phish360_tri_branch_cnn,phish360_screenshot_cnn=0.9199; phish360_tri_branch_cnn=0.5675,https://www.njuskalo.hr/
+L00021_legitimate,0,2,6,www.book118.com,weekly_feed,phish360_html_cnn; phish360_screenshot_cnn,phish360_html_cnn=0.9914; phish360_screenshot_cnn=0.8364,https://www.book118.com/
+L00024_legitimate,0,2,6,riftskygames.com,weekly_feed,phish360_html_cnn; phish360_dual_branch_cnn,phish360_html_cnn=0.8785; phish360_dual_branch_cnn=0.5997,https://riftskygames.com/
+L00027_legitimate,0,2,6,codehs.com,weekly_feed,phish360_screenshot_cnn; phish360_tri_branch_cnn,phish360_screenshot_cnn=0.9664; phish360_tri_branch_cnn=0.5830,https://codehs.com/
+L00031_legitimate,0,2,6,customer.io,weekly_feed,phish360_url_lstm; phish360_html_cnn,phish360_url_lstm=0.7803; phish360_html_cnn=0.9218,https://customer.io/features/in-app-messages
+L00035_legitimate,0,2,6,www.parisaeroport.fr,weekly_feed,phish360_html_cnn; phish360_screenshot_cnn,phish360_html_cnn=0.7120; phish360_screenshot_cnn=0.9849,https://www.parisaeroport.fr/
+L00036_legitimate,0,2,6,search.worldcat.org,weekly_feed,phish360_html_cnn; phish360_screenshot_cnn,phish360_html_cnn=0.6571; phish360_screenshot_cnn=0.7890,https://search.worldcat.org/
+L00041_legitimate,0,2,6,www.kino-teatr.ru,weekly_feed,phish360_html_cnn; phish360_screenshot_cnn,phish360_html_cnn=0.8901; phish360_screenshot_cnn=0.8150,https://www.kino-teatr.ru/
+L00045_legitimate,0,2,6,airfind.com,weekly_feed,phish360_screenshot_cnn; phish360_tri_branch_cnn,phish360_screenshot_cnn=0.5255; phish360_tri_branch_cnn=0.8363,https://airfind.com/
+P00006_phishing,1,2,6,97ee7.catex.at,weekly_feed,phish360_url_cnn; phish360_dual_branch_cnn,phish360_url_cnn=0.0945; phish360_dual_branch_cnn=0.4780,https://97ee7.catex.at/cnbcard/
+P00021_phishing,1,2,6,nishkarsh71.github.io,weekly_feed,phish360_url_cnn; phish360_url_lstm,phish360_url_cnn=0.0054; phish360_url_lstm=0.0790,https://nishkarsh71.github.io/Mini-Project/
+P00023_phishing,1,2,6,kunwardev0210.github.io,weekly_feed,phish360_url_cnn; phish360_screenshot_cnn,phish360_url_cnn=0.1312; phish360_screenshot_cnn=0.4831,https://kunwardev0210.github.io/kunwardevvratsingh-max.github.io/
+P00024_phishing,1,2,6,himanshu-kamboz.github.io,weekly_feed,phish360_url_cnn; phish360_url_lstm,phish360_url_cnn=0.0006; phish360_url_lstm=0.0376,https://himanshu-kamboz.github.io/netmirrror/
+P00031_phishing,1,2,6,dpdsuivicolisschweiz.vercel.app,weekly_feed,phish360_url_lstm; phish360_html_cnn,phish360_url_lstm=0.4493; phish360_html_cnn=0.4306,https://dpdsuivicolisschweiz.vercel.app/
+P00033_phishing,1,2,6,petsrblx.blogspot.com,weekly_feed,phish360_url_cnn; phish360_url_lstm,phish360_url_cnn=0.0698; phish360_url_lstm=0.2829,https://petsrblx.blogspot.com/?m=1
+P00035_phishing,1,2,6,arshina896.github.io,weekly_feed,phish360_url_lstm; phish360_dual_branch_cnn,phish360_url_lstm=0.0149; phish360_dual_branch_cnn=0.3392,https://arshina896.github.io/instagram/
+P00038_phishing,1,2,6,amarsahu21724-max.github.io,weekly_feed,phish360_url_lstm; phish360_screenshot_cnn,phish360_url_lstm=0.3838; phish360_screenshot_cnn=0.1100,https://amarsahu21724-max.github.io/Amazon-FrontPage-Clone/
+P00047_phishing,1,2,6,www.bybvgd.com,weekly_feed,phish360_url_cnn; phish360_url_lstm,phish360_url_cnn=0.0293; phish360_url_lstm=0.3782,https://www.bybvgd.com/#/pages/user/login
+L00003_legitimate,0,1,6,www.legoland.com,weekly_feed,phish360_screenshot_cnn,phish360_screenshot_cnn=0.6619,https://www.legoland.com/
+L00004_legitimate,0,1,6,www.747live.bet,weekly_feed,phish360_html_cnn,phish360_html_cnn=0.7611,https://www.747live.bet/
+L00010_legitimate,0,1,6,animevietsub.pl,weekly_feed,phish360_url_lstm,phish360_url_lstm=0.8364,https://animevietsub.pl/
+L00013_legitimate,0,1,6,www.hugoboss.com,weekly_feed,phish360_screenshot_cnn,phish360_screenshot_cnn=0.6315,https://www.hugoboss.com/vn/en/home
+L00018_legitimate,0,1,6,ushistory.org,weekly_feed,phish360_html_cnn,phish360_html_cnn=0.6700,https://ushistory.org/
+L00022_legitimate,0,1,6,www.gamegupi.top,weekly_feed,phish360_screenshot_cnn,phish360_screenshot_cnn=0.8604,https://www.gamegupi.top/
+L00023_legitimate,0,1,6,stape.io,weekly_feed,phish360_html_cnn,phish360_html_cnn=0.7709,https://stape.io/
+L00025_legitimate,0,1,6,www.eenews.net,weekly_feed,phish360_screenshot_cnn,phish360_screenshot_cnn=0.5726,https://www.eenews.net/
+L00026_legitimate,0,1,6,lucky.net,weekly_feed,phish360_tri_branch_cnn,phish360_tri_branch_cnn=0.9489,https://lucky.net/
+L00030_legitimate,0,1,6,www.acenet.edu,weekly_feed,phish360_html_cnn,phish360_html_cnn=0.7829,https://www.acenet.edu/Pages/default.aspx
+L00032_legitimate,0,1,6,www.drpornofilme.com,weekly_feed,phish360_html_cnn,phish360_html_cnn=0.6266,https://www.drpornofilme.com/
+L00033_legitimate,0,1,6,www.jinr.ru,weekly_feed,phish360_html_cnn,phish360_html_cnn=0.6477,https://www.jinr.ru/
+L00034_legitimate,0,1,6,www.hightail.com,weekly_feed,phish360_screenshot_cnn,phish360_screenshot_cnn=0.9386,https://www.hightail.com/
+L00037_legitimate,0,1,6,www.top10vpn.com,weekly_feed,phish360_html_cnn,phish360_html_cnn=0.6223,https://www.top10vpn.com/tools/what-is-my-ip/
+L00038_legitimate,0,1,6,www.wthr.com,weekly_feed,phish360_html_cnn,phish360_html_cnn=0.9017,https://www.wthr.com/
+L00040_legitimate,0,1,6,192-168-1-1ip.mobi,weekly_feed,phish360_url_lstm,phish360_url_lstm=0.9829,https://192-168-1-1ip.mobi/
+L00042_legitimate,0,1,6,www.behindthename.com,weekly_feed,phish360_html_cnn,phish360_html_cnn=0.8927,https://www.behindthename.com/
+L00050_legitimate,0,1,6,www.larksuite.com,weekly_feed,phish360_screenshot_cnn,phish360_screenshot_cnn=0.8794,https://www.larksuite.com/en_sg/?from_site=feishu
+P00007_phishing,1,1,6,reqnosa.com,weekly_feed,phish360_screenshot_cnn,phish360_screenshot_cnn=0.4137,http://reqnosa.com/login.php
+P00008_phishing,1,1,6,eugene59779.softr.app,weekly_feed,phish360_html_cnn,phish360_html_cnn=0.0306,https://eugene59779.softr.app/
+P00011_phishing,1,1,6,instagram-clone-teal-five.vercel.app,weekly_feed,phish360_dual_branch_cnn,phish360_dual_branch_cnn=0.1023,https://instagram-clone-teal-five.vercel.app/
+P00013_phishing,1,1,6,dicepencilpaper.com,weekly_feed,phish360_url_cnn,phish360_url_cnn=0.3705,https://dicepencilpaper.com/project.php
+P00016_phishing,1,1,6,trezor-suite-connect-en.typedream.app,weekly_feed,phish360_dual_branch_cnn,phish360_dual_branch_cnn=0.0985,https://trezor-suite-connect-en.typedream.app/
+P00017_phishing,1,1,6,z-maniac-sidd.github.io,weekly_feed,phish360_url_cnn,phish360_url_cnn=0.3352,https://z-maniac-sidd.github.io/Netflix_clone/
+P00018_phishing,1,1,6,web-git-brnunes-web-auction-allow-sepolia-uniswap.vercel.app,weekly_feed,phish360_dual_branch_cnn,phish360_dual_branch_cnn=0.0692,https://web-git-brnunes-web-auction-allow-sepolia-uniswap.vercel.app/portfolio/nfts
+P00027_phishing,1,1,6,anshu01maan-ux.github.io,weekly_feed,phish360_screenshot_cnn,phish360_screenshot_cnn=0.3864,https://anshu01maan-ux.github.io/cseds1/
+P00029_phishing,1,1,6,click-hostopoint-ch-redirect5824312.blogspot.com,weekly_feed,phish360_url_cnn,phish360_url_cnn=0.0156,https://click-hostopoint-ch-redirect5824312.blogspot.com/
+P00037_phishing,1,1,6,pratistaglow.com,weekly_feed,phish360_url_cnn,phish360_url_cnn=0.0718,https://pratistaglow.com/m/login
+P00039_phishing,1,1,6,coiusha.efqfq9v-dfeqvdjoqwhf8.com,weekly_feed,phish360_url_cnn,phish360_url_cnn=0.3689,https://coiusha.efqfq9v-dfeqvdjoqwhf8.com:9971/home?inviteCode=48093&cid=36

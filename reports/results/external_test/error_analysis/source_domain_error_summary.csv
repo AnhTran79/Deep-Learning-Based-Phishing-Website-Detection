@@ -1,0 +1,13 @@
+model,source,true_label,samples,wrong,error_rate,top_wrong_domains
+phish360_dual_branch_cnn,weekly_feed,0,50,7,0.14,volnalink.uk; www.showpm.in; streamate.com; riftskygames.com; famu.jp; laser247.pro; abcnews.com
+phish360_dual_branch_cnn,weekly_feed,1,50,10,0.2,lovely-emerald-chihuahua.31-22-7-7.cpanel.site; 97ee7.catex.at; instagram-clone-teal-five.vercel.app; trezor-suite-connect-en.typedream.app; web-git-brnunes-web-auction-allow-sepolia-uniswap.vercel.app; www.roblox.com.et; igsorteofifa2026.registo-seguro.com; arshina896.github.io
+phish360_html_cnn,weekly_feed,0,50,32,0.64,netbsd.org; www.747live.bet; drift-pixel.ai; lumalabs.ai; www.pair.com; volnalink.uk; www.showpm.in; www.kugou.com
+phish360_html_cnn,weekly_feed,1,50,6,0.12,lovely-emerald-chihuahua.31-22-7-7.cpanel.site; eugene59779.softr.app; www.roblox.com.et; dpdsuivicolisschweiz.vercel.app; igsorteofifa2026.registo-seguro.com; 1188xinpujing.com
+phish360_screenshot_cnn,weekly_feed,0,50,30,0.6,netbsd.org; www.legoland.com; drift-pixel.ai; lumalabs.ai; www.pair.com; volnalink.uk; www.showpm.in; www.kugou.com
+phish360_screenshot_cnn,weekly_feed,1,50,5,0.1,krist222.github.io; reqnosa.com; kunwardev0210.github.io; anshu01maan-ux.github.io; amarsahu21724-max.github.io
+phish360_tri_branch_cnn,weekly_feed,0,50,17,0.34,lumalabs.ai; volnalink.uk; www.showpm.in; newtalk.tw; www.wps.cn; www.businessday.co.za; www.njuskalo.hr; lucky.net
+phish360_tri_branch_cnn,weekly_feed,1,50,1,0.02,www.oceancertsurveyors.com
+phish360_url_cnn,weekly_feed,0,50,4,0.08,volnalink.uk; rivegauche.ru; famu.jp; easy-slot666.pages.dev
+phish360_url_cnn,weekly_feed,1,50,17,0.34,krist222.github.io; lovely-emerald-chihuahua.31-22-7-7.cpanel.site; 97ee7.catex.at; dicepencilpaper.com; z-maniac-sidd.github.io; nishkarsh71.github.io; kunwardev0210.github.io; himanshu-kamboz.github.io
+phish360_url_lstm,weekly_feed,0,50,6,0.12,volnalink.uk; animevietsub.pl; customer.io; 192-168-1-1ip.mobi; laser247.pro; easy-slot666.pages.dev
+phish360_url_lstm,weekly_feed,1,50,13,0.26,krist222.github.io; nishkarsh71.github.io; himanshu-kamboz.github.io; www.roblox.com.et; dpdsuivicolisschweiz.vercel.app; igsorteofifa2026.registo-seguro.com; petsrblx.blogspot.com; arshina896.github.io

@@ -428,6 +428,59 @@ Tranco khong cung cap phishing. De tao tap external 25/25, can thu thap 25
 phishing tu mot nguon phishing cap nhat vao output rieng hoac mot buoc merge
 co kiem tra leakage; khong duoc gan nhan phishing cho domain Tranco.
 
+### Tao Candidates Hang Tuan Tu Feed Moi
+
+Script `fetch_weekly_candidates.py` tao file CSV dau vao cho collector theo kieu ban tu
+dong muc 2:
+
+```text
+OpenPhish Community feed + Tranco/local legitimate list
+  -> data/candidates/week_YYYY_MM_DD.csv
+  -> collect_external_dataset.py
+```
+
+Vi du lay phishing tu OpenPhish Community va legitimate tu Tranco local:
+
+```bash
+python fetch_weekly_candidates.py ^
+  --tranco-file "C:\path\top-1m.csv" ^
+  --out data/candidates/week_2026_06_24.csv ^
+  --phishing-count 50 ^
+  --legitimate-count 50 ^
+  --update-seen
+```
+
+Output co schema:
+
+```text
+url,label,source
+```
+
+Sau do dua file candidates nay vao collector:
+
+```bash
+python collect_external_dataset.py ^
+  --input data/candidates/week_2026_06_24.csv ^
+  --output data/external_test/week_2026_06_24 ^
+  --legitimate-count 50 ^
+  --phishing-count 50 ^
+  --source weekly_feed ^
+  --browser-channel chrome ^
+  --headless ^
+  --resume
+```
+
+Neu chua muon dung network, co the dung file OpenPhish da tai san:
+
+```bash
+python fetch_weekly_candidates.py ^
+  --openphish-offline-file openphish_feed.txt ^
+  --tranco-file "C:\path\top-1m.csv"
+```
+
+`data/candidates/seen_urls.csv` duoc dung de tranh lay lai URL da thu thap o cac
+dot truoc. Chi dung `--update-seen` sau khi chap nhan batch candidates do.
+
 Pipeline mac dinh:
 
 - Thu thap den khi du 25 legitimate va 25 phishing; URL loi se bi ghi vao
@@ -492,3 +545,110 @@ reports/figures/external_test/
   roc_curve_<model>.png
   external_model_comparison_metrics.png
 ```
+
+## Giam Loi External: Analyze, Calibrate, Retrain
+
+Ket qua tren external test thap thuong do domain shift: phishing moi tu OpenPhish
+va legitimate tu Tranco khac voi Phish360 train. Collector chi loc mau loi ve mat
+ky thuat; no khong lam mau tro nen de hon cho model.
+
+Quy trinh khuyen dung:
+
+```text
+1. Collect mot batch external_validation rieng
+2. Evaluate model tren validation batch
+3. Calibrate threshold tu validation predictions
+4. Evaluate external_test cuoi cung bang threshold da calibrate
+5. Audit mau sai va chi dua mau da kiem tra vao training_pool de retrain
+```
+
+Phan tich loi cua mot lan evaluate:
+
+```bash
+python analyze_external_errors.py ^
+  --results-dir reports/results/external_test
+```
+
+Output:
+
+```text
+reports/results/external_test/error_analysis/
+  model_error_summary.csv
+  hard_samples.csv
+  source_domain_error_summary.csv
+  error_analysis_summary.json
+```
+
+Calibrate threshold tu validation predictions:
+
+```bash
+python calibrate_thresholds.py ^
+  --predictions reports/results/external_validation/predictions.csv ^
+  --out reports/results/external_validation/calibrated_thresholds.json ^
+  --objective f1
+```
+
+Neu muon giam bao nham legitimate, co the dat gioi han false positive rate:
+
+```bash
+python calibrate_thresholds.py ^
+  --predictions reports/results/external_validation/predictions.csv ^
+  --out reports/results/external_validation/calibrated_thresholds.json ^
+  --objective f1 ^
+  --min-recall 0.80 ^
+  --max-false-positive-rate 0.15
+```
+
+Evaluate final external test bang threshold da calibrate:
+
+```bash
+python evaluate_external_dataset.py ^
+  --dataset data/external_test/week_2026_06_24 ^
+  --results-dir reports/results/external_test_calibrated ^
+  --figures-dir reports/figures/external_test_calibrated ^
+  --threshold-overrides reports/results/external_validation/calibrated_thresholds.json ^
+  --models phish360_url_cnn phish360_url_lstm phish360_html_cnn phish360_screenshot_cnn phish360_dual_branch_cnn phish360_tri_branch_cnn
+```
+
+Khong nen calibrate threshold tren dung final external test neu muon bao cao ket
+qua khach quan. Batch final test chi dung de do ket qua sau khi da chon threshold
+va model tu validation batch.
+
+### Audit Va Dua Mau Moi Vao Training Pool
+
+Giai phap lau dai khong phai chi chinh threshold, ma la dua mau moi da kiem tra
+vao training data roi train lai model. Quy trinh ban tu dong:
+
+```bash
+python create_audit_queue.py ^
+  --dataset data/external_test/week_2026_06_24 ^
+  --predictions reports/results/external_test/predictions.csv ^
+  --out data/audit/week_2026_06_24_audit_queue.csv
+```
+
+Mo file audit queue va dien cac cot:
+
+```text
+audit_status: approved | corrected | rejected | uncertain
+audited_label: 0 hoac 1 neu can sua label
+notes: ly do ngan gon
+```
+
+Chi cac dong `approved` hoac `corrected` moi duoc dua vao training index:
+
+```bash
+python build_audited_training_index.py ^
+  --dataset data/external_test/week_2026_06_24 ^
+  --audit-csv data/audit/week_2026_06_24_audit_queue.csv ^
+  --out data/processed/phish360_plus_audited.csv
+```
+
+Train lai Phish360 tren index moi:
+
+```bash
+python train_phish360.py ^
+  --data data/processed/phish360_plus_audited.csv ^
+  --skip-evaluation
+```
+
+Sau khi train lai, evaluate tren external test rieng de so sanh model cu va moi.

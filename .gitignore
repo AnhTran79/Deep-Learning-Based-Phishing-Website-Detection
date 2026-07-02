@@ -10,11 +10,14 @@ __pycache__/
 
 artifacts/*.pkl
 chart/
+data/audit/
+data/candidates/
 data/external/
 data/external_test/
 data/raw/
 data/processed/*.csv
 data/processed/*.csv.gz
+data/processed/*.summary.json
 data/splits/
 dataset/*.html
 models/saved/*.pt

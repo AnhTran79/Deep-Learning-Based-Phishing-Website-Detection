@@ -1,5 +1,5 @@
 {
-  "dataset": "data\\external_test\\dataset_100_clean",
+  "dataset": "data\\external_test\\week_2026_06_24",
   "dataset_role": "external_test_only",
   "samples": 100,
   "label_counts": {
@@ -10,6 +10,6 @@
   "threshold_policy": "saved model threshold; 0.5 for joblib baselines",
   "training_performed": false,
   "threshold_tuning_performed": false,
-  "best_external_model_by_f1": "phish360_url_lstm",
-  "best_external_f1": 0.8275862068965517
+  "best_external_model_by_f1": "phish360_tri_branch_cnn",
+  "best_external_f1": 0.8448275862068966
 }

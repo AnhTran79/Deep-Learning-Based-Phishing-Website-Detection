@@ -1,0 +1,167 @@
+sample_id,true_label,predicted_label,correct,phishing_probability,threshold,threshold_source,model,family,input,source,domain,url
+L00036_legitimate,0,1,0,0.6140931248664856,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,tranco_2026_06_28,ddnews.gov.in,https://ddnews.gov.in/
+L00048_legitimate,0,1,0,0.5193129181861877,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,tranco_2026_06_28,satu.xl.co.id,https://satu.xl.co.id/
+P00001_phishing,1,0,0,0.00039498377009294927,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,www.xfinityrefunds.com,https://www.xfinityrefunds.com/TokenLogin
+P00002_phishing,1,0,0,0.053702984005212784,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,tribu-tax.cl,https://tribu-tax.cl/components/com_media/upgrade/
+P00008_phishing,1,0,0,0.39245980978012085,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,rhinomadeusainc.shop,https://rhinomadeusainc.shop/index.php/campaigns/xg327p5nl2403/web-version/nz391gb6wtbc8
+P00009_phishing,1,0,0,0.3937719166278839,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,teachersamanthasilva.github.io,https://teachersamanthasilva.github.io/CloneHomeInstagram/
+P00012_phishing,1,0,0,0.00857918057590723,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,barclays-grads.twineapp.com,https://barclays-grads.twineapp.com/password/invalid-tenant
+P00020_phishing,1,0,0,0.0005590274231508374,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,fnworth.com,https://fnworth.com/
+P00023_phishing,1,0,0,0.06904793530702591,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,ww547.citibankonlline.com,http://ww547.citibankonlline.com/
+P00024_phishing,1,0,0,0.012062584049999714,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,rbxmulti.net,https://rbxmulti.net/
+P00027_phishing,1,0,0,0.47639012336730957,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,tugcekaner.github.io,https://tugcekaner.github.io/movie_clone/
+P00029_phishing,1,0,0,0.14521846175193787,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,swapnil-2004.github.io,https://swapnil-2004.github.io/Netflix_Clone-2024/
+P00033_phishing,1,0,0,0.1618664711713791,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,extra-cyan-zfxl6ma9.edgeone.app,https://extra-cyan-zfxl6ma9.edgeone.app/
+P00034_phishing,1,0,0,0.024426937103271484,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,fin103.grayku.com,https://fin103.grayku.com/
+P00038_phishing,1,0,0,0.005467075388878584,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,fabioldp.github.io,https://fabioldp.github.io/Rercriando-a-Pagina-inicial-do-Instagram/
+P00039_phishing,1,0,0,7.849464964237995e-06,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,www.krstoragecompare.com,https://www.krstoragecompare.com/
+P00040_phishing,1,0,0,1.391682781104464e-05,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,www.eliaruizwork.com,https://www.eliaruizwork.com/portfolio
+P00041_phishing,1,0,0,0.0012724694097414613,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,exodus-authorized.com,https://exodus-authorized.com/authentication
+P00042_phishing,1,0,0,5.042924385634251e-05,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,www.xptspecielty.com,https://www.xptspecielty.com/
+P00044_phishing,1,0,0,0.025324050337076187,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,scooke-work.github.io,https://scooke-work.github.io/sc-demo-platform/
+P00047_phishing,1,0,0,0.014101396314799786,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,nerdstarcode.github.io,https://nerdstarcode.github.io/Clone-Instagram/
+P00049_phishing,1,0,0,0.3619964122772217,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,imztoken.com,https://imztoken.com/security
+P00054_phishing,1,0,0,0.022160440683364868,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,pricefn.top,https://pricefn.top/
+P00057_phishing,1,0,0,0.08036018162965775,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,like.do,https://like.do/link-status?error=missing&slug=robloxusers322367312458profile
+P00061_phishing,1,0,0,0.08342666178941727,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,cloud.digitalizer.in,https://cloud.digitalizer.in/men/
+P00062_phishing,1,0,0,0.001668159500695765,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,pokerklas.yeni-lisans.icu,https://pokerklas.yeni-lisans.icu/
+P00070_phishing,1,0,0,0.005052782595157623,0.5,checkpoint_or_default,phish360_url_cnn,phish360,URL,openphish_2026_06_28,hjc23.net,https://hjc23.net/
+L00001_legitimate,0,1,0,0.6489531993865967,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,sumsub.com,https://sumsub.com/
+L00002_legitimate,0,1,0,0.6475542187690735,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,iterable.com,https://iterable.com/
+L00005_legitimate,0,1,0,0.6480110287666321,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,infowest.com,https://infowest.com/
+L00010_legitimate,0,1,0,0.6480501890182495,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,easy.gr,https://easy.gr/el/
+L00011_legitimate,0,1,0,0.648501992225647,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,stripe-club.com,https://stripe-club.com/
+L00021_legitimate,0,1,0,0.6487311124801636,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,searchiq.com,https://searchiq.com/
+L00022_legitimate,0,1,0,0.6468846201896667,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,pjhit.com,https://pjhit.com/
+L00023_legitimate,0,1,0,0.648303210735321,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,advantagetvs.in,https://advantagetvs.in/login.aspx
+L00024_legitimate,0,1,0,0.6471848487854004,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,bb5348.com,https://bb5348.com/
+L00025_legitimate,0,1,0,0.6469920873641968,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,voka.tv,https://voka.tv/ru-RU
+L00026_legitimate,0,1,0,0.6486602425575256,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,sitemeter.com,https://sitemeter.com/lander
+L00029_legitimate,0,1,0,0.6475176215171814,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,beautylisher.com,https://beautylisher.com/#/home
+L00034_legitimate,0,1,0,0.6466556191444397,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,e-hentai.org,https://e-hentai.org/
+L00036_legitimate,0,1,0,0.6462100744247437,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,ddnews.gov.in,https://ddnews.gov.in/
+L00037_legitimate,0,1,0,0.6471468806266785,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,xiaomiwear.com,https://xiaomiwear.com/
+L00038_legitimate,0,1,0,0.6481382250785828,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,companiesmarketcap.com,https://companiesmarketcap.com/
+L00043_legitimate,0,1,0,0.6472423672676086,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,1desiremovies.dad,https://1desiremovies.dad/
+L00044_legitimate,0,1,0,0.6467857360839844,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,leadsrx.com,https://leadsrx.com/
+L00045_legitimate,0,1,0,0.6471855044364929,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,boomi.com,https://boomi.com/
+L00046_legitimate,0,1,0,0.6476800441741943,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,desifakes.com,https://desifakes.com/
+L00047_legitimate,0,1,0,0.6461321711540222,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,jehost.ru,https://jehost.ru/
+L00048_legitimate,0,1,0,0.6487654447555542,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,satu.xl.co.id,https://satu.xl.co.id/
+L00054_legitimate,0,1,0,0.6481517553329468,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,ktrackers.com,https://ktrackers.com/
+L00055_legitimate,0,1,0,0.6483908891677856,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,sorenson.com,https://sorenson.com/captioncall/
+L00058_legitimate,0,1,0,0.6478070616722107,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,contentinsights.com,https://contentinsights.com/
+L00061_legitimate,0,1,0,0.6485638618469238,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,padsquad.com,https://padsquad.com/
+L00063_legitimate,0,1,0,0.6472187042236328,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,vidikids.com,https://vidikids.com/
+L00065_legitimate,0,1,0,0.6469038128852844,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,unej.ac.id,https://unej.ac.id/
+L00067_legitimate,0,1,0,0.646426260471344,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,helixo.co,https://helixo.co/
+L00068_legitimate,0,1,0,0.6475291848182678,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,tranco_2026_06_28,follow.it,https://follow.it/
+P00001_phishing,1,0,0,0.13252098858356476,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,openphish_2026_06_28,www.xfinityrefunds.com,https://www.xfinityrefunds.com/TokenLogin
+P00003_phishing,1,0,0,0.1297215223312378,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,openphish_2026_06_28,www.borderclick.com,https://www.borderclick.com/BC/media/Borderclick/Files/free-robux-2026.html
+P00039_phishing,1,0,0,0.13795679807662964,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,openphish_2026_06_28,www.krstoragecompare.com,https://www.krstoragecompare.com/
+P00040_phishing,1,0,0,0.13032066822052002,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,openphish_2026_06_28,www.eliaruizwork.com,https://www.eliaruizwork.com/portfolio
+P00042_phishing,1,0,0,0.13185706734657288,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,openphish_2026_06_28,www.xptspecielty.com,https://www.xptspecielty.com/
+P00050_phishing,1,0,0,0.13154339790344238,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,openphish_2026_06_28,www.ilpendolo.it,https://www.ilpendolo.it/Alphabnakgr/Login.html
+P00060_phishing,1,0,0,0.13025808334350586,0.5,checkpoint_or_default,phish360_url_lstm,phish360,URL,openphish_2026_06_28,www.roblox.com.bi,https://www.roblox.com.bi/games/84575720768520/Lucky-Block-Rush?privateServerLinkCode=29383763406896541593443970804931
+L00013_legitimate,0,1,0,0.8662934303283691,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,tranco_2026_06_28,www.nick.com,https://www.nick.com/global
+L00017_legitimate,0,1,0,0.7105764746665955,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,tranco_2026_06_28,www.deputy.com,https://www.deputy.com/
+L00022_legitimate,0,1,0,0.7917276620864868,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,tranco_2026_06_28,pjhit.com,https://pjhit.com/
+L00026_legitimate,0,1,0,0.9977474808692932,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,tranco_2026_06_28,sitemeter.com,https://sitemeter.com/lander
+L00041_legitimate,0,1,0,0.997766375541687,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,tranco_2026_06_28,www.deledao.com,https://www.deledao.com/
+L00042_legitimate,0,1,0,0.5686900615692139,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,tranco_2026_06_28,www.archive-it.de,https://www.archive-it.de/
+L00059_legitimate,0,1,0,0.5520531535148621,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,tranco_2026_06_28,www.ctt.pt,https://www.ctt.pt/particulares/index
+P00001_phishing,1,0,0,0.0023792418651282787,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,www.xfinityrefunds.com,https://www.xfinityrefunds.com/TokenLogin
+P00003_phishing,1,0,0,0.2592751979827881,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,www.borderclick.com,https://www.borderclick.com/BC/media/Borderclick/Files/free-robux-2026.html
+P00004_phishing,1,0,0,0.2848890721797943,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,devhouda.github.io,https://devhouda.github.io/amazon-clone/checkout.html
+P00012_phishing,1,0,0,0.37978798151016235,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,barclays-grads.twineapp.com,https://barclays-grads.twineapp.com/password/invalid-tenant
+P00020_phishing,1,0,0,0.12282762676477432,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,fnworth.com,https://fnworth.com/
+P00021_phishing,1,0,0,0.0014561809366568923,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,jwgl.my.m.luxurylifebrand.com,http://jwgl.my.m.luxurylifebrand.com/
+P00024_phishing,1,0,0,6.220880459295586e-05,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,rbxmulti.net,https://rbxmulti.net/
+P00027_phishing,1,0,0,0.0592438168823719,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,tugcekaner.github.io,https://tugcekaner.github.io/movie_clone/
+P00030_phishing,1,0,0,0.2341802418231964,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,canburnlikeacigarette.github.io,https://canburnlikeacigarette.github.io/vibexarr/
+P00031_phishing,1,0,0,2.4292223315569572e-05,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,web2.pancake.run,https://web2.pancake.run/add/0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d/0x8d0D000Ee44948FC98c9B98A4FA4921476f08B0d/100?chain=bsc&minPrice=0.500299799999999961&maxPrice=2.001199199999999845
+P00039_phishing,1,0,0,9.882730864774203e-07,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,www.krstoragecompare.com,https://www.krstoragecompare.com/
+P00040_phishing,1,0,0,3.58041979779955e-05,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,www.eliaruizwork.com,https://www.eliaruizwork.com/portfolio
+P00043_phishing,1,0,0,0.006597607862204313,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,instagramcom-instagramcom.blogspot.com,http://instagramcom-instagramcom.blogspot.com/
+P00044_phishing,1,0,0,0.0030527899507433176,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,scooke-work.github.io,https://scooke-work.github.io/sc-demo-platform/
+P00046_phishing,1,0,0,0.46568799018859863,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,rcb.cuj.temporary.site,https://rcb.cuj.temporary.site/banmro/app-vernieuwen/reader.html
+P00049_phishing,1,0,0,0.09850554168224335,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,imztoken.com,https://imztoken.com/security
+P00052_phishing,1,0,0,0.40613579750061035,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,koylu-bot.neocities.org,https://koylu-bot.neocities.org/cvcvv/
+P00054_phishing,1,0,0,0.2565580904483795,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,pricefn.top,https://pricefn.top/
+P00056_phishing,1,0,0,0.2689363360404968,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,salathebox.com,https://salathebox.com/wp-content/id.handel.mobile.de-login-service/
+P00057_phishing,1,0,0,0.02812369167804718,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,like.do,https://like.do/link-status?error=missing&slug=robloxusers322367312458profile
+P00060_phishing,1,0,0,0.02951103262603283,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,www.roblox.com.bi,https://www.roblox.com.bi/games/84575720768520/Lucky-Block-Rush?privateServerLinkCode=29383763406896541593443970804931
+P00065_phishing,1,0,0,0.0009272414026781917,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,dd1.qzz.io,https://dd1.qzz.io/dana/t0f/
+P00068_phishing,1,0,0,0.43111711740493774,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,metamasklogino.webflow.io,https://metamasklogino.webflow.io/
+P00069_phishing,1,0,0,0.14540356397628784,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,bancolaumentatucupo-net.vercel.app,https://bancolaumentatucupo-net.vercel.app/
+P00070_phishing,1,0,0,0.0007963671232573688,0.5,checkpoint_or_default,phish360_html_cnn,phish360,HTML,openphish_2026_06_28,hjc23.net,https://hjc23.net/
+L00001_legitimate,0,1,0,0.7555379867553711,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,sumsub.com,https://sumsub.com/
+L00004_legitimate,0,1,0,0.5603628754615784,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,www.gitbook.com,https://www.gitbook.com/
+L00007_legitimate,0,1,0,0.8669183254241943,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,www.airbnb.com.au,https://www.airbnb.com.au/
+L00011_legitimate,0,1,0,0.6494196057319641,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,stripe-club.com,https://stripe-club.com/
+L00017_legitimate,0,1,0,0.5981029868125916,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,www.deputy.com,https://www.deputy.com/
+L00018_legitimate,0,1,0,0.5475270748138428,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,www.sendcloud.com,https://www.sendcloud.com/
+L00019_legitimate,0,1,0,0.737774133682251,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,www.obilet.com,https://www.obilet.com/en
+L00021_legitimate,0,1,0,0.612474262714386,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,searchiq.com,https://searchiq.com/
+L00022_legitimate,0,1,0,0.662195086479187,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,pjhit.com,https://pjhit.com/
+L00025_legitimate,0,1,0,0.5236427187919617,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,voka.tv,https://voka.tv/ru-RU
+L00026_legitimate,0,1,0,0.9309313297271729,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,sitemeter.com,https://sitemeter.com/lander
+L00027_legitimate,0,1,0,0.7113825082778931,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,www.linksys.com,https://www.linksys.com/
+L00029_legitimate,0,1,0,0.8481680154800415,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,beautylisher.com,https://beautylisher.com/#/home
+L00033_legitimate,0,1,0,0.8876070380210876,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,www.mygov.in,https://www.mygov.in/
+L00038_legitimate,0,1,0,0.8077389597892761,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,companiesmarketcap.com,https://companiesmarketcap.com/
+L00042_legitimate,0,1,0,0.8698051571846008,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,www.archive-it.de,https://www.archive-it.de/
+L00050_legitimate,0,1,0,0.8032912015914917,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,www.wjx.cn,https://www.wjx.cn/
+L00056_legitimate,0,1,0,0.6136757731437683,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,www.5horizons.fr,http://www.5horizons.fr/
+L00057_legitimate,0,1,0,0.7606282830238342,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,www.powerschool.com,https://www.powerschool.com/solutions/unified-classroom/schoology-learning/
+L00059_legitimate,0,1,0,0.7411189079284668,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,www.ctt.pt,https://www.ctt.pt/particulares/index
+L00060_legitimate,0,1,0,0.9705040454864502,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,www.canyon.com,https://www.canyon.com/
+L00062_legitimate,0,1,0,0.9244629144668579,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,www1.kiwoom.com,https://www1.kiwoom.com/h/common/error
+L00068_legitimate,0,1,0,0.6012797951698303,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,tranco_2026_06_28,follow.it,https://follow.it/
+P00001_phishing,1,0,0,0.19171985983848572,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,www.xfinityrefunds.com,https://www.xfinityrefunds.com/TokenLogin
+P00016_phishing,1,0,0,0.3110490143299103,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,24761a05n2-netizen.github.io,https://24761a05n2-netizen.github.io/netflix_webpage/
+P00018_phishing,1,0,0,0.1540013998746872,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,layer-bridgetrezr.typedream.app,https://layer-bridgetrezr.typedream.app/
+P00020_phishing,1,0,0,0.016440456733107567,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,fnworth.com,https://fnworth.com/
+P00021_phishing,1,0,0,0.011644884943962097,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,jwgl.my.m.luxurylifebrand.com,http://jwgl.my.m.luxurylifebrand.com/
+P00024_phishing,1,0,0,0.06789770722389221,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,rbxmulti.net,https://rbxmulti.net/
+P00027_phishing,1,0,0,0.15040774643421173,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,tugcekaner.github.io,https://tugcekaner.github.io/movie_clone/
+P00029_phishing,1,0,0,0.11470290273427963,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,swapnil-2004.github.io,https://swapnil-2004.github.io/Netflix_Clone-2024/
+P00032_phishing,1,0,0,0.13337798416614532,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,gokhanbyk.github.io,https://gokhanbyk.github.io/Netflix-loginPage-clone/
+P00034_phishing,1,0,0,0.008555284701287746,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,fin103.grayku.com,https://fin103.grayku.com/
+P00048_phishing,1,0,0,0.06348675489425659,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,anshuchourasia.github.io,https://anshuchourasia.github.io/netflix/
+P00052_phishing,1,0,0,0.4072059988975525,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,koylu-bot.neocities.org,https://koylu-bot.neocities.org/cvcvv/
+P00054_phishing,1,0,0,0.26267942786216736,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,pricefn.top,https://pricefn.top/
+P00055_phishing,1,0,0,0.0034904228523373604,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,auth--apps-kucooin-sso---cdnn.webflow.io,https://auth--apps-kucooin-sso---cdnn.webflow.io/
+P00064_phishing,1,0,0,0.2486797273159027,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,sumitsrivastava01.github.io,https://sumitsrivastava01.github.io/Amazon-Clone/
+P00066_phishing,1,0,0,0.0565112940967083,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,rakeshdubey4.github.io,https://rakeshdubey4.github.io/amazonClone/
+P00068_phishing,1,0,0,0.3486253619194031,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,metamasklogino.webflow.io,https://metamasklogino.webflow.io/
+P00070_phishing,1,0,0,0.1094835177063942,0.5,checkpoint_or_default,phish360_screenshot_cnn,phish360,Screenshot,openphish_2026_06_28,hjc23.net,https://hjc23.net/
+L00022_legitimate,0,1,0,0.7839893698692322,0.5,checkpoint_or_default,phish360_dual_branch_cnn,phish360,URL + HTML,tranco_2026_06_28,pjhit.com,https://pjhit.com/
+L00023_legitimate,0,1,0,0.7890805602073669,0.5,checkpoint_or_default,phish360_dual_branch_cnn,phish360,URL + HTML,tranco_2026_06_28,advantagetvs.in,https://advantagetvs.in/login.aspx
+L00026_legitimate,0,1,0,0.9561454057693481,0.5,checkpoint_or_default,phish360_dual_branch_cnn,phish360,URL + HTML,tranco_2026_06_28,sitemeter.com,https://sitemeter.com/lander
+L00058_legitimate,0,1,0,0.7637574076652527,0.5,checkpoint_or_default,phish360_dual_branch_cnn,phish360,URL + HTML,tranco_2026_06_28,contentinsights.com,https://contentinsights.com/
+P00001_phishing,1,0,0,0.008290668949484825,0.5,checkpoint_or_default,phish360_dual_branch_cnn,phish360,URL + HTML,openphish_2026_06_28,www.xfinityrefunds.com,https://www.xfinityrefunds.com/TokenLogin
+P00012_phishing,1,0,0,0.3498844504356384,0.5,checkpoint_or_default,phish360_dual_branch_cnn,phish360,URL + HTML,openphish_2026_06_28,barclays-grads.twineapp.com,https://barclays-grads.twineapp.com/password/invalid-tenant
+P00020_phishing,1,0,0,0.009485695511102676,0.5,checkpoint_or_default,phish360_dual_branch_cnn,phish360,URL + HTML,openphish_2026_06_28,fnworth.com,https://fnworth.com/
+P00024_phishing,1,0,0,0.08309140056371689,0.5,checkpoint_or_default,phish360_dual_branch_cnn,phish360,URL + HTML,openphish_2026_06_28,rbxmulti.net,https://rbxmulti.net/
+P00027_phishing,1,0,0,0.4529952108860016,0.5,checkpoint_or_default,phish360_dual_branch_cnn,phish360,URL + HTML,openphish_2026_06_28,tugcekaner.github.io,https://tugcekaner.github.io/movie_clone/
+P00039_phishing,1,0,0,8.99239421414677e-06,0.5,checkpoint_or_default,phish360_dual_branch_cnn,phish360,URL + HTML,openphish_2026_06_28,www.krstoragecompare.com,https://www.krstoragecompare.com/
+P00040_phishing,1,0,0,0.0011901151156052947,0.5,checkpoint_or_default,phish360_dual_branch_cnn,phish360,URL + HTML,openphish_2026_06_28,www.eliaruizwork.com,https://www.eliaruizwork.com/portfolio
+P00041_phishing,1,0,0,0.0027192002162337303,0.5,checkpoint_or_default,phish360_dual_branch_cnn,phish360,URL + HTML,openphish_2026_06_28,exodus-authorized.com,https://exodus-authorized.com/authentication
+P00044_phishing,1,0,0,0.0017757050227373838,0.5,checkpoint_or_default,phish360_dual_branch_cnn,phish360,URL + HTML,openphish_2026_06_28,scooke-work.github.io,https://scooke-work.github.io/sc-demo-platform/
+P00054_phishing,1,0,0,0.47254204750061035,0.5,checkpoint_or_default,phish360_dual_branch_cnn,phish360,URL + HTML,openphish_2026_06_28,pricefn.top,https://pricefn.top/
+P00057_phishing,1,0,0,0.03956729918718338,0.5,checkpoint_or_default,phish360_dual_branch_cnn,phish360,URL + HTML,openphish_2026_06_28,like.do,https://like.do/link-status?error=missing&slug=robloxusers322367312458profile
+L00002_legitimate,0,1,0,0.6903917789459229,0.5,checkpoint_or_default,phish360_tri_branch_cnn,phish360,URL + HTML + Screenshot,tranco_2026_06_28,iterable.com,https://iterable.com/
+L00007_legitimate,0,1,0,0.986903190612793,0.5,checkpoint_or_default,phish360_tri_branch_cnn,phish360,URL + HTML + Screenshot,tranco_2026_06_28,www.airbnb.com.au,https://www.airbnb.com.au/
+L00023_legitimate,0,1,0,0.8092761039733887,0.5,checkpoint_or_default,phish360_tri_branch_cnn,phish360,URL + HTML + Screenshot,tranco_2026_06_28,advantagetvs.in,https://advantagetvs.in/login.aspx
+L00029_legitimate,0,1,0,0.7543870210647583,0.5,checkpoint_or_default,phish360_tri_branch_cnn,phish360,URL + HTML + Screenshot,tranco_2026_06_28,beautylisher.com,https://beautylisher.com/#/home
+L00037_legitimate,0,1,0,0.6542580723762512,0.5,checkpoint_or_default,phish360_tri_branch_cnn,phish360,URL + HTML + Screenshot,tranco_2026_06_28,xiaomiwear.com,https://xiaomiwear.com/
+L00048_legitimate,0,1,0,0.9918991327285767,0.5,checkpoint_or_default,phish360_tri_branch_cnn,phish360,URL + HTML + Screenshot,tranco_2026_06_28,satu.xl.co.id,https://satu.xl.co.id/
+L00057_legitimate,0,1,0,0.6851330995559692,0.5,checkpoint_or_default,phish360_tri_branch_cnn,phish360,URL + HTML + Screenshot,tranco_2026_06_28,www.powerschool.com,https://www.powerschool.com/solutions/unified-classroom/schoology-learning/
+L00062_legitimate,0,1,0,0.9200678467750549,0.5,checkpoint_or_default,phish360_tri_branch_cnn,phish360,URL + HTML + Screenshot,tranco_2026_06_28,www1.kiwoom.com,https://www1.kiwoom.com/h/common/error
+P00020_phishing,1,0,0,0.0005189779913052917,0.5,checkpoint_or_default,phish360_tri_branch_cnn,phish360,URL + HTML + Screenshot,openphish_2026_06_28,fnworth.com,https://fnworth.com/
+P00024_phishing,1,0,0,0.05621134489774704,0.5,checkpoint_or_default,phish360_tri_branch_cnn,phish360,URL + HTML + Screenshot,openphish_2026_06_28,rbxmulti.net,https://rbxmulti.net/
+P00034_phishing,1,0,0,0.19908156991004944,0.5,checkpoint_or_default,phish360_tri_branch_cnn,phish360,URL + HTML + Screenshot,openphish_2026_06_28,fin103.grayku.com,https://fin103.grayku.com/
+P00039_phishing,1,0,0,1.4870412087475415e-05,0.5,checkpoint_or_default,phish360_tri_branch_cnn,phish360,URL + HTML + Screenshot,openphish_2026_06_28,www.krstoragecompare.com,https://www.krstoragecompare.com/
+P00040_phishing,1,0,0,0.00019721660646609962,0.5,checkpoint_or_default,phish360_tri_branch_cnn,phish360,URL + HTML + Screenshot,openphish_2026_06_28,www.eliaruizwork.com,https://www.eliaruizwork.com/portfolio
+P00041_phishing,1,0,0,0.2502024471759796,0.5,checkpoint_or_default,phish360_tri_branch_cnn,phish360,URL + HTML + Screenshot,openphish_2026_06_28,exodus-authorized.com,https://exodus-authorized.com/authentication
