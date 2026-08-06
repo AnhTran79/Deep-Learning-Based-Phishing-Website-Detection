@@ -359,6 +359,16 @@ Runtime load cac model trong `models/saved/` va chon model kha dung co F1-score 
 reports/results/mendeley/model_comparison.csv
 ```
 
+Neu co `models/saved/phish360/phish360_tri_branch_cnn.pt`, web demo se uu tien
+Phish360 Tri-Branch CNN. Demo se dung Playwright de truy cap URL, lay rendered HTML
+va chup screenshot runtime, sau do du doan bang `URL + HTML + Screenshot`.
+
+Setup screenshot runtime mot lan:
+
+```bash
+playwright install chromium
+```
+
 Neu khong co metrics/model trained, demo fallback ve heuristic URL + HTML rules.
 
 Moi lan predict duoc ghi vao:
@@ -652,3 +662,16 @@ python train_phish360.py ^
 ```
 
 Sau khi train lai, evaluate tren external test rieng de so sanh model cu va moi.
+
+Lenh ngan cho quy trinh tren:
+
+```bash
+python hybrid_pipeline.py collect --count 100
+python hybrid_pipeline.py evaluate week_2026_07_25
+# Audit file CSV duoc tao trong data/audit/
+python hybrid_pipeline.py retrain week_2026_07_25
+```
+
+`collect` tu lay OpenPhish + Tranco va thu thap du 100/100. `evaluate` cham ca
+6 model va tao audit queue. `retrain` chi chay sau khi audit queue co dong
+`approved` hoac `corrected`.
