@@ -23,8 +23,6 @@ from PIL import Image, ImageStat, UnidentifiedImageError
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 DEFAULT_OUTPUT = Path("data/external_test/dataset_50")
-DEFAULT_MENDELEY_METADATA = Path("output/mendeley_metadata.csv")
-DEFAULT_MENDELEY_HTML_ROOT = Path("dataset")
 DEFAULT_PHISH360_INDEX = Path("data/processed/phish360_url_html_screenshot.csv")
 DEFAULT_PHISH360_ROOT = Path("data/external/Phish360")
 
@@ -279,20 +277,10 @@ def _hash_html_file(index: LeakageIndex, path: Path, stat_prefix: str) -> None:
 
 
 def build_leakage_index(
-    mendeley_metadata: Path,
-    mendeley_html_root: Path,
     phish360_index: Path,
     project_root: Path = PROJECT_ROOT,
 ) -> LeakageIndex:
     index = LeakageIndex()
-    if mendeley_metadata.is_file():
-        with mendeley_metadata.open("r", encoding="utf-8-sig", errors="replace", newline="") as handle:
-            for row in csv.DictReader(handle):
-                _add_url(index, row.get("url", ""), "mendeley")
-                html_file = (row.get("html_file") or "").strip()
-                if html_file:
-                    _hash_html_file(index, mendeley_html_root / html_file, "mendeley")
-
     if phish360_index.is_file():
         with phish360_index.open("r", encoding="utf-8-sig", errors="replace", newline="") as handle:
             for row in csv.DictReader(handle):
@@ -330,8 +318,6 @@ def load_or_build_leakage_index(args: argparse.Namespace) -> LeakageIndex:
     if cache_path.is_file() and not args.refresh_leakage_index:
         return LeakageIndex.from_json(json.loads(cache_path.read_text(encoding="utf-8")))
     index = build_leakage_index(
-        Path(args.mendeley_metadata),
-        Path(args.mendeley_html_root),
         Path(args.phish360_index),
     )
     cache_path.parent.mkdir(parents=True, exist_ok=True)
@@ -985,13 +971,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action=argparse.BooleanOptionalAction,
         default=True,
     )
-    parser.add_argument("--mendeley-metadata", default=str(DEFAULT_MENDELEY_METADATA))
-    parser.add_argument("--mendeley-html-root", default=str(DEFAULT_MENDELEY_HTML_ROOT))
     parser.add_argument("--phish360-index", default=str(DEFAULT_PHISH360_INDEX))
     parser.add_argument(
         "--leakage-cache",
-        default="data/external_test/leakage_index.json",
-        help="Cached hashes/URLs derived from Mendeley and Phish360.",
+        default="data/external_test/phish360_leakage_index.json",
+        help="Cached hashes and URLs derived from Phish360.",
     )
     parser.add_argument("--refresh-leakage-index", action="store_true")
     parser.add_argument(

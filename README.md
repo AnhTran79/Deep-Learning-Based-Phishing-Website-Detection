@@ -1,60 +1,30 @@
-# Multimodal Phishing Website Detection
+# Deep Learning Based Phishing Website Detection
 
-Project phat hien website phishing bang deep learning, ho tro cac dau vao URL, HTML source code va screenshot.
+Project phat hien website phishing bang deep learning da phuong thuc, su dung:
 
-Project hien co 2 luong huan luyen rieng:
+- URL
+- HTML source code
+- Screenshot
+- Label: `0 = legitimate`, `1 = phishing`
 
-```text
-1. Mendeley pipeline: URL + HTML
-2. Phish360 pipeline: URL + HTML + Screenshot
-```
+Dataset va model chinh cua project la Phish360. Tri-Branch CNN la model chinh;
+nam model con lai duoc train de baseline va ablation.
 
-Scope:
+## Dataset Phish360
 
-- Luong Mendeley chi dung URL va HTML source code.
-- Luong Phish360 dung URL, HTML source code va screenshot.
-- Khong phu thuoc blacklist.
-- Label: `0 = legitimate`, `1 = phishing`.
-
-## Dataset Dang Dung
-
-### Luong 1: Mendeley URL + HTML
-
-Dataset Mendeley da tao san:
-
-```text
-output/mendeley_metadata.csv
-```
-
-File nay co cac cot:
-
-```text
-rec_id,url,html_file,label,created_date
-```
-
-HTML source duoc doc theo cot `html_file` tu thu muc HTML, mac dinh:
-
-```text
-dataset/
-```
-
-Neu thu muc HTML nam o cho khac, truyen lai bang `--html-root`.
-
-### Luong 2: Phish360 URL + HTML + Screenshot
-
-Dataset Phish360 dat tai:
+Tai dataset tu:
 
 ```text
 https://web.cs.hacettepe.edu.tr/~selman/phish360-dataset/
 ```
 
-Do dataset co dung luong lon, folder dataset khong duoc commit len GitHub. Sau khi tai dataset, dat vao:
+Dat dataset tai:
 
 ```text
 data/external/Phish360/
 ```
 
-Moi sample co cau truc:
+Cau truc moi sample:
 
 ```text
 <sample_id>/
@@ -71,607 +41,215 @@ L... -> 0 = legitimate
 P... -> 1 = phishing
 ```
 
-`Label/label.txt` duoc giu nhu metadata phu `target_brand`, vi nhieu phishing sample ghi brand bi gia mao thay vi chu `phish`.
+Dataset, external samples va model `.pt` khong duoc commit len GitHub.
 
-## Project Layout
+## Sau Model Phish360
 
-```text
-app/                 FastAPI web demo
-output/              mendeley_metadata.csv
-data/processed/      dataset da clean
-data/splits/         train.csv, val.csv, test.csv
-src/data/            load metadata, read HTML, clean, split
-src/preprocessing/   URL/HTML preprocessing va char tokenizer
-src/features/        handcrafted URL + HTML features
-src/models/          baseline va deep model definitions
-src/training/        train baselines va deep models
-src/evaluation/      metrics, figures, model comparison
-src/inference/       predict mot URL
-models/saved/        model da train
-reports/results/     ket qua tach theo dataset: mendeley/, phish360/
-reports/figures/     chart tach theo dataset: mendeley/, phish360/
-```
+| Model | Input | Vai tro |
+|---|---|---|
+| `phish360_url_cnn` | URL | Ablation |
+| `phish360_url_lstm` | URL | So sanh CNN/LSTM |
+| `phish360_html_cnn` | HTML | Ablation |
+| `phish360_screenshot_cnn` | Screenshot | Ablation |
+| `phish360_dual_branch_cnn` | URL + HTML | Fusion baseline |
+| `phish360_tri_branch_cnn` | URL + HTML + Screenshot | Model chinh |
 
-## Hai Luong Huan Luyen Rieng
-
-### 1. Mendeley: URL + HTML
-
-Lenh nay giu nguyen pipeline cu:
-
-```bash
-python train_model.py
-```
-
-Ket qua:
+Tri-Branch CNN gom ba nhanh:
 
 ```text
-reports/results/mendeley/model_comparison.csv
-models/saved/
-reports/figures/mendeley/
+URL -> Embedding -> Conv1D -> Pooling
+HTML -> Embedding -> Conv1D -> Pooling
+Screenshot -> Conv2D -> Pooling
+                |
+        Concatenate -> Fully Connected -> Sigmoid
 ```
 
-### 2. Phish360: URL + HTML + Screenshot
-
-Lenh rieng cho pipeline multi-modal moi:
+## Cai Dat
 
 ```bash
-python train_phish360.py
+pip install -r requirements.txt
+playwright install chromium
 ```
 
-Lenh nay tu dong:
+## Train Phish360
 
-```text
-1. Tao index CSV tu data/external/Phish360
-2. Train cac model Phish360
-3. Ghi ket qua rieng cho Phish360
-```
-
-Chay nhanh de smoke test:
+Train ca 6 model:
 
 ```bash
-python train_phish360.py --quick
+python train_phish360.py --model all
 ```
 
-Chi train model fusion 3 nhanh:
+Chi train model chinh:
 
 ```bash
 python train_phish360.py --model tri_branch_cnn
 ```
 
-Chi tao CSV index, chua train:
+Train nhanh de smoke test:
 
 ```bash
-python train_phish360.py --force-prepare --skip-training
+python train_phish360.py --quick
 ```
 
-Output rieng:
-
-```text
-data/processed/phish360_url_html_screenshot.csv
-reports/results/phish360/phish360_model_comparison.csv
-models/saved/phish360/
-reports/figures/phish360/
-```
-
-Phish360 models:
-
-- `url_cnn`: URL only.
-- `url_lstm`: URL only.
-- `html_cnn`: HTML only.
-- `screenshot_cnn`: Screenshot only.
-- `dual_branch_cnn`: URL + HTML.
-- `tri_branch_cnn`: URL + HTML + Screenshot.
-
-## Setup
+Train index da bo sung mau audit:
 
 ```bash
-pip install -r requirements.txt
-```
-
-## One-Command Training Pipeline
-
-Lenh khuyen dung:
-
-```bash
-python train_model.py
-```
-
-Lenh nay tu dong:
-
-```text
-1. Prepare dataset tu output/mendeley_metadata.csv + dataset/*.html
-2. Train baseline models
-3. Train deep models
-4. Export model comparison, classification reports va charts
-```
-
-Chay nhanh de smoke test pipeline:
-
-```bash
-python train_model.py --quick
-```
-
-`--quick` tuong duong voi:
-
-```text
---max-rows 5000 --epochs 3 --cpu
-```
-
-Mot so tuy chon hay dung:
-
-```bash
-python train_model.py --skip-deep
-python train_model.py --deep-model dual_branch_cnn
-python train_model.py --force-prepare
-python train_model.py --skip-evaluation
-```
-
-## Prepare Dataset Tu Metadata CSV
-
-Neu HTML files nam trong `dataset/`:
-
-```bash
-python -m src.data.prepare_from_metadata ^
-  --metadata output/mendeley_metadata.csv ^
-  --html-root dataset ^
-  --out data/processed/mendeley_url_html_label.csv.gz ^
-  --min-html-length 100
-```
-
-Neu muon chi tao ban metadata sach truoc:
-
-```bash
-python -m src.data.prepare_from_metadata ^
-  --metadata output/mendeley_metadata.csv ^
-  --metadata-only
-```
-
-Lenh nay tao:
-
-```text
-data/processed/mendeley_clean_metadata.csv
-```
-
-Ban metadata sach van co the dung cho training bang cach truyen them `--html-root dataset`; HTML se duoc doc lazy theo `html_file`.
-
-Output full:
-
-```text
-data/processed/mendeley_url_html_label.csv.gz
-```
-
-Schema:
-
-```text
-rec_id,url,html_file,html,label,created_date,html_length,source
-```
-
-## Split Train/Validation/Test
-
-```bash
-python -m src.data.split_dataset ^
-  --input data/processed/mendeley_url_html_label.csv.gz ^
-  --out-dir data/splits ^
-  --train-size 0.70 ^
-  --val-size 0.15 ^
-  --test-size 0.15
-```
-
-Neu dang dung ban metadata sach:
-
-```bash
-python -m src.data.split_dataset ^
-  --input data/processed/mendeley_clean_metadata.csv ^
-  --html-root dataset ^
-  --out-dir data/splits
+python train_phish360.py ^
+  --data data/processed/phish360_plus_audited.csv ^
+  --model all ^
+  --html-max-chars 5000 ^
+  --max-html-len 5000
 ```
 
 Output:
 
 ```text
-data/splits/train.csv
-data/splits/val.csv
-data/splits/test.csv
+data/processed/phish360_url_html_screenshot.csv
+models/saved/phish360/
+reports/results/phish360/
+reports/figures/phish360/
 ```
 
-## Train Baselines
+## Web Demo
 
-```bash
-python -m src.training.train_baselines ^
-  --data data/processed/mendeley_url_html_label.csv.gz
-```
-
-Models:
-
-- `baseline_tfidf_logreg`: URL + HTML text -> TF-IDF -> Logistic Regression.
-- `baseline_random_forest`: URL + HTML -> handcrafted features -> Random Forest.
-
-## Train Deep Models
-
-Train mot model:
-
-```bash
-python -m src.training.train_deep_models ^
-  --data data/processed/mendeley_url_html_label.csv.gz ^
-  --model dual_branch_cnn
-```
-
-Train tat ca:
-
-```bash
-python -m src.training.train_deep_models ^
-  --data data/processed/mendeley_url_html_label.csv.gz ^
-  --model all
-```
-
-Deep models:
-
-- `url_cnn`: URL -> Embedding -> CNN1D -> Dense -> Sigmoid.
-- `url_lstm`: URL -> Embedding -> BiLSTM -> Dense -> Sigmoid.
-- `html_cnn`: HTML -> Embedding -> CNN1D -> Dense -> Sigmoid.
-- `dual_branch_cnn`: URL branch + HTML branch -> Concatenate fusion -> Dense -> Sigmoid.
-
-## Evaluation
-
-Tat ca model ghi metrics vao:
+Model demo chinh:
 
 ```text
-reports/results/mendeley/model_comparison.csv
-reports/results/mendeley/model_comparison_sorted.csv
-reports/results/mendeley/classification_reports.csv
-reports/results/mendeley/classification_report_<model>.txt
-reports/figures/mendeley/confusion_matrix_<model>.png
-reports/figures/mendeley/roc_curve_<model>.png
-reports/figures/mendeley/model_comparison_metrics.png
+models/saved/phish360/phish360_tri_branch_cnn.pt
 ```
 
-Xem bang so sanh:
-
-```bash
-python -m src.evaluation.compare_models --results-dir reports/results/mendeley --figures-dir reports/figures/mendeley
-```
-
-Metrics gom Accuracy, Precision, Recall, F1-score, ROC-AUC, Confusion Matrix, False Positive Rate, False Negative Rate va sklearn-style classification report theo tung class.
-
-## Predict One URL
-
-```bash
-python -m src.inference.predict ^
-  --url "https://example.com/login" ^
-  --model models/saved/dual_branch_cnn.pt
-```
-
-## Run Web Demo
+Chay:
 
 ```bash
 python app.py
 ```
 
-Server:
+Mo:
 
 ```text
 http://127.0.0.1:8000
 ```
 
-Runtime load cac model trong `models/saved/` va chon model kha dung co F1-score tot nhat tu:
+Demo dung Playwright de lay rendered HTML va screenshot cua URL, sau do chay
+Tri-Branch CNN. Neu checkpoint khong ton tai, demo chi dung heuristic fallback
+va hien `model_source = heuristic_url_html_rules`.
+
+## External Validation
+
+Nguon candidate:
+
+- OpenPhish Community Feed: phishing candidate.
+- Tranco: legitimate candidate.
+
+Playwright thu thap final URL, rendered HTML, screenshot va metadata. Collector
+kiem tra URL, HTML va screenshot trung voi Phish360 de giam data leakage.
+
+Quy trinh ngan:
+
+```bash
+python hybrid_pipeline.py collect --count 100
+python hybrid_pipeline.py evaluate week_YYYY_MM_DD
+```
+
+`collect` tu tao batch theo ngay neu khong truyen ten batch. `evaluate` cham ca
+6 model Phish360 va tao audit queue:
 
 ```text
-reports/results/mendeley/model_comparison.csv
+data/audit/week_YYYY_MM_DD_audit_queue.csv
 ```
 
-Neu co `models/saved/phish360/phish360_tri_branch_cnn.pt`, web demo se uu tien
-Phish360 Tri-Branch CNN. Demo se dung Playwright de truy cap URL, lay rendered HTML
-va chup screenshot runtime, sau do du doan bang `URL + HTML + Screenshot`.
-
-Setup screenshot runtime mot lan:
-
-```bash
-playwright install chromium
-```
-
-Neu khong co metrics/model trained, demo fallback ve heuristic URL + HTML rules.
-
-Moi lan predict duoc ghi vao:
+Audit status:
 
 ```text
-reports/results/mendeley/prediction_history.csv
+approved  -> nhan hien tai dung
+corrected -> sua nhan bang audited_label
+rejected  -> khong dua vao training
+uncertain -> chua du bang chung
 ```
 
-## External Test Dataset (Khong Dung De Train)
-
-Pipeline `collect_external_dataset.py` tao tap external test rieng gom URL sau redirect,
-raw HTML va screenshot trong cung mot lan truy cap Playwright. Tap nay chi duoc dung
-de danh gia external; khong dung cho train, validation, chon model hoac chinh threshold.
-
-Setup Chromium mot lan:
+Sau khi audit:
 
 ```bash
-pip install -r requirements.txt
-playwright install chromium
+python hybrid_pipeline.py retrain week_YYYY_MM_DD
 ```
 
-Neu Chromium download khong kha dung nhung may da cai Chrome hoac Edge, them
-`--browser-channel chrome` hoac `--browser-channel msedge`.
+Batch da dua vao training khong con la external test doc lap. Model moi phai
+duoc evaluate tren batch tuong lai chua tung tham gia training.
 
-Vi du voi CSV co cot `url,label` va `0 = legitimate`, `1 = phishing`:
+## Lenh Chi Tiet
 
-```bash
-python collect_external_dataset.py ^
-  --input urls.csv ^
-  --output data/external_test/dataset_50 ^
-  --legitimate-count 25 ^
-  --phishing-count 25 ^
-  --source kaggle ^
-  --headless ^
-  --zip
-```
-
-Dataset Kaggle `phishing_site_urls.csv` dung cot `URL,Label` va nhan `good,bad`:
-
-```bash
-python collect_external_dataset.py ^
-  --input "C:\path\phishing_site_urls.csv" ^
-  --url-column URL ^
-  --label-column Label ^
-  --source kaggle ^
-  --headless ^
-  --zip
-```
-
-Tranco `top-1m.csv` khong co header va co schema `rank,domain`. Tat ca domain
-Tranco chi duoc gan nhan legitimate:
-
-```bash
-python collect_external_dataset.py ^
-  --input "C:\path\top-1m.csv" ^
-  --input-format tranco ^
-  --output data/external_test/tranco_legitimate ^
-  --legitimate-count 25 ^
-  --phishing-count 0 ^
-  --max-input-rows 50000 ^
-  --source tranco ^
-  --browser-channel chrome ^
-  --headless
-```
-
-Tranco khong cung cap phishing. De tao tap external 25/25, can thu thap 25
-phishing tu mot nguon phishing cap nhat vao output rieng hoac mot buoc merge
-co kiem tra leakage; khong duoc gan nhan phishing cho domain Tranco.
-
-### Tao Candidates Hang Tuan Tu Feed Moi
-
-Script `fetch_weekly_candidates.py` tao file CSV dau vao cho collector theo kieu ban tu
-dong muc 2:
-
-```text
-OpenPhish Community feed + Tranco/local legitimate list
-  -> data/candidates/week_YYYY_MM_DD.csv
-  -> collect_external_dataset.py
-```
-
-Vi du lay phishing tu OpenPhish Community va legitimate tu Tranco local:
+Tao candidate:
 
 ```bash
 python fetch_weekly_candidates.py ^
-  --tranco-file "C:\path\top-1m.csv" ^
-  --out data/candidates/week_2026_06_24.csv ^
-  --phishing-count 50 ^
-  --legitimate-count 50 ^
+  --tranco-file data/raw/top-1m.csv ^
+  --out data/candidates/week_YYYY_MM_DD.csv ^
+  --phishing-count 100 ^
+  --legitimate-count 100 ^
   --update-seen
 ```
 
-Output co schema:
-
-```text
-url,label,source
-```
-
-Sau do dua file candidates nay vao collector:
+Collect URL + HTML + screenshot:
 
 ```bash
 python collect_external_dataset.py ^
-  --input data/candidates/week_2026_06_24.csv ^
-  --output data/external_test/week_2026_06_24 ^
-  --legitimate-count 50 ^
-  --phishing-count 50 ^
-  --source weekly_feed ^
-  --browser-channel chrome ^
+  --input data/candidates/week_YYYY_MM_DD.csv ^
+  --output data/external_test/week_YYYY_MM_DD ^
+  --legitimate-count 100 ^
+  --phishing-count 100 ^
   --headless ^
   --resume
 ```
 
-Neu chua muon dung network, co the dung file OpenPhish da tai san:
-
-```bash
-python fetch_weekly_candidates.py ^
-  --openphish-offline-file openphish_feed.txt ^
-  --tranco-file "C:\path\top-1m.csv"
-```
-
-`data/candidates/seen_urls.csv` duoc dung de tranh lay lai URL da thu thap o cac
-dot truoc. Chi dung `--update-seen` sau khi chap nhan batch candidates do.
-
-Pipeline mac dinh:
-
-- Thu thap den khi du 25 legitimate va 25 phishing; URL loi se bi ghi vao
-  `rejected_samples.csv` va pipeline tiep tuc.
-- Ho tro `--timeout-ms`, `--retries`, `--random-state`, `--resume` va tuy chinh
-  mapping label qua `--legitimate-values`, `--phishing-values`.
-- Loai URL, SHA-256 HTML va screenshot dHash trung/gan trung voi Mendeley,
-  Phish360 va cac sample external da chap nhan.
-- Loai domain phishing da co trong Phish360 `trainval` theo mac dinh.
-- Chan popup, download, media va browser permissions khong can thiet; khong co
-  buoc dang nhap.
-- Browser context la tam thoi. Service worker duoc cho phep mac dinh de render
-  dung cac trang IPFS; co the chan bang `--service-workers block`.
-- Loai cac trang loi browser/gateway, 404, access denied va domain parking
-  pho bien thay vi nhan chung thanh sample hop le.
-- Ghi `collection_results.csv`, `rejected_samples.csv`, `dataset_summary.json`
-  va chi tao `dataset_50.zip` khi du quota.
-
-Smoke test gioi han, khong crawl du 50:
-
-```bash
-python collect_external_dataset.py ^
-  --input urls.csv ^
-  --legitimate-count 1 ^
-  --phishing-count 1 ^
-  --max-candidates 4 ^
-  --output data/external_test/smoke
-```
-
-## External Evaluation
-
-Dataset external chi dung inference, khong train lai, khong chon model va khong
-chinh threshold:
+Evaluate:
 
 ```bash
 python evaluate_external_dataset.py ^
-  --dataset data/external_test/dataset_100_clean
-```
-
-Chi danh gia model dung dong thoi URL + HTML + Screenshot:
-
-```bash
-python evaluate_external_dataset.py ^
-  --dataset data/external_test/dataset_100_clean ^
-  --models phish360_tri_branch_cnn
-```
-
-Script danh gia tat ca model Mendeley va Phish360 da luu, dung threshold trong
-checkpoint (`0.5` cho baseline joblib), va ghi ket qua rieng:
-
-```text
-reports/results/external_test/
-  predictions.csv
-  misclassifications.csv
-  model_comparison.csv
-  classification_reports.csv
-  classification_report_<model>.txt
-  evaluation_summary.json
-
-reports/figures/external_test/
-  confusion_matrix_<model>.png
-  roc_curve_<model>.png
-  external_model_comparison_metrics.png
-```
-
-## Giam Loi External: Analyze, Calibrate, Retrain
-
-Ket qua tren external test thap thuong do domain shift: phishing moi tu OpenPhish
-va legitimate tu Tranco khac voi Phish360 train. Collector chi loc mau loi ve mat
-ky thuat; no khong lam mau tro nen de hon cho model.
-
-Quy trinh khuyen dung:
-
-```text
-1. Collect mot batch external_validation rieng
-2. Evaluate model tren validation batch
-3. Calibrate threshold tu validation predictions
-4. Evaluate external_test cuoi cung bang threshold da calibrate
-5. Audit mau sai va chi dua mau da kiem tra vao training_pool de retrain
-```
-
-Phan tich loi cua mot lan evaluate:
-
-```bash
-python analyze_external_errors.py ^
-  --results-dir reports/results/external_test
-```
-
-Output:
-
-```text
-reports/results/external_test/error_analysis/
-  model_error_summary.csv
-  hard_samples.csv
-  source_domain_error_summary.csv
-  error_analysis_summary.json
-```
-
-Calibrate threshold tu validation predictions:
-
-```bash
-python calibrate_thresholds.py ^
-  --predictions reports/results/external_validation/predictions.csv ^
-  --out reports/results/external_validation/calibrated_thresholds.json ^
-  --objective f1
-```
-
-Neu muon giam bao nham legitimate, co the dat gioi han false positive rate:
-
-```bash
-python calibrate_thresholds.py ^
-  --predictions reports/results/external_validation/predictions.csv ^
-  --out reports/results/external_validation/calibrated_thresholds.json ^
-  --objective f1 ^
-  --min-recall 0.80 ^
-  --max-false-positive-rate 0.15
-```
-
-Evaluate final external test bang threshold da calibrate:
-
-```bash
-python evaluate_external_dataset.py ^
-  --dataset data/external_test/week_2026_06_24 ^
-  --results-dir reports/results/external_test_calibrated ^
-  --figures-dir reports/figures/external_test_calibrated ^
-  --threshold-overrides reports/results/external_validation/calibrated_thresholds.json ^
+  --dataset data/external_test/week_YYYY_MM_DD ^
+  --results-dir reports/results/external_test_week_YYYY_MM_DD ^
+  --figures-dir reports/figures/external_test_week_YYYY_MM_DD ^
   --models phish360_url_cnn phish360_url_lstm phish360_html_cnn phish360_screenshot_cnn phish360_dual_branch_cnn phish360_tri_branch_cnn
 ```
 
-Khong nen calibrate threshold tren dung final external test neu muon bao cao ket
-qua khach quan. Batch final test chi dung de do ket qua sau khi da chon threshold
-va model tu validation batch.
+## Ket Qua Hien Tai
 
-### Audit Va Dua Mau Moi Vao Training Pool
-
-Giai phap lau dai khong phai chi chinh threshold, ma la dua mau moi da kiem tra
-vao training data roi train lai model. Quy trinh ban tu dong:
-
-```bash
-python create_audit_queue.py ^
-  --dataset data/external_test/week_2026_06_24 ^
-  --predictions reports/results/external_test/predictions.csv ^
-  --out data/audit/week_2026_06_24_audit_queue.csv
-```
-
-Mo file audit queue va dien cac cot:
+Internal test Phish360 cua Tri-Branch CNN:
 
 ```text
-audit_status: approved | corrected | rejected | uncertain
-audited_label: 0 hoac 1 neu can sua label
-notes: ly do ngan gon
+Accuracy:  0.9247
+Precision: 0.8993
+Recall:    0.9406
+F1-score:  0.9195
+ROC-AUC:   0.9776
 ```
 
-Chi cac dong `approved` hoac `corrected` moi duoc dua vao training index:
+External batch `week_2026_07_09`, 100 phishing + 100 legitimate:
+
+```text
+Accuracy:  0.8650
+Precision: 0.8288
+Recall:    0.9200
+F1-score:  0.8720
+ROC-AUC:   0.9242
+```
+
+## Project Layout
+
+```text
+app/                         FastAPI web demo
+src/data/                    Phish360 index va multimodal loader
+src/models/                  6 deep learning models
+src/preprocessing/           URL, HTML va image preprocessing
+src/training/                Phish360 training
+src/evaluation/              Metrics va model comparison
+models/saved/phish360/       Checkpoint da train, khong commit
+reports/results/phish360/    Internal results
+reports/results/external_*   External validation results
+hybrid_pipeline.py           Hybrid automation wrapper
+```
+
+## Kiem Thu
 
 ```bash
-python build_audited_training_index.py ^
-  --dataset data/external_test/week_2026_06_24 ^
-  --audit-csv data/audit/week_2026_06_24_audit_queue.csv ^
-  --out data/processed/phish360_plus_audited.csv
+python -m pytest -q
 ```
-
-Train lai Phish360 tren index moi:
-
-```bash
-python train_phish360.py ^
-  --data data/processed/phish360_plus_audited.csv ^
-  --skip-evaluation
-```
-
-Sau khi train lai, evaluate tren external test rieng de so sanh model cu va moi.
-
-Lenh ngan cho quy trinh tren:
-
-```bash
-python hybrid_pipeline.py collect --count 100
-python hybrid_pipeline.py evaluate week_2026_07_25
-# Audit file CSV duoc tao trong data/audit/
-python hybrid_pipeline.py retrain week_2026_07_25
-```
-
-`collect` tu lay OpenPhish + Tranco va thu thap du 100/100. `evaluate` cham ca
-6 model va tao audit queue. `retrain` chi chay sau khi audit queue co dong
-`approved` hoac `corrected`.

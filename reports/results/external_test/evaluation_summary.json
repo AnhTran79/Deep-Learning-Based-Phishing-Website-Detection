@@ -7,7 +7,7 @@
     "phishing": 50
   },
   "models_evaluated": 6,
-  "threshold_policy": "saved model threshold; 0.5 for joblib baselines",
+  "threshold_policy": "saved Phish360 model threshold",
   "training_performed": false,
   "threshold_tuning_performed": false,
   "best_external_model_by_f1": "phish360_tri_branch_cnn",

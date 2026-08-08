@@ -144,9 +144,9 @@ def export_classification_reports(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Print model comparison sorted by F1-score.")
-    parser.add_argument("--results-dir", default="reports/results/mendeley")
-    parser.add_argument("--figures-dir", default="reports/figures/mendeley")
-    parser.add_argument("--comparison-file", default="model_comparison.csv")
+    parser.add_argument("--results-dir", default="reports/results/phish360")
+    parser.add_argument("--figures-dir", default="reports/figures/phish360")
+    parser.add_argument("--comparison-file", default="phish360_model_comparison.csv")
     parser.add_argument("--no-export", action="store_true")
     return parser.parse_args()
 

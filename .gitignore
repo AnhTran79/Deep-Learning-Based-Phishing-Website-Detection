@@ -19,11 +19,15 @@ data/processed/*.csv
 data/processed/*.csv.gz
 data/processed/*.summary.json
 data/splits/
-dataset/*.html
+dataset/
+output/
 models/saved/*.pt
 models/saved/*.joblib
 models/saved/*_metrics.json
 models/saved/phish360/
 models/tokenizers/
 reports/results/*.csv
+reports/results/demo/
+reports/results/mendeley/
+reports/figures/mendeley/
 reports/figures/*.png

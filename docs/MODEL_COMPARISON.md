@@ -1,45 +1,20 @@
-# Model Comparison
+# Phish360 Model Comparison
 
-Pipeline moi trong `src/` bao cao cac model sau:
+The project trains six supervised deep-learning models on the same Phish360
+split so each input modality can be compared fairly.
 
-| Model | Nhom | Input | Mo ta |
-| --- | --- | --- | --- |
-| `baseline_tfidf_logreg` | Baseline | URL + HTML text | TF-IDF + Logistic Regression. |
-| `baseline_random_forest` | Baseline | Handcrafted URL + HTML features | Random Forest tren feature co the giai thich. |
-| `url_cnn` | Deep learning | URL | CNN character-level hoc raw URL. |
-| `url_lstm` | Deep learning | URL | LSTM/BiLSTM hoc quan he tuan tu trong URL. |
-| `html_cnn` | Deep learning | HTML | CNN character-level hoc raw HTML. |
-| `dual_branch_cnn` | Deep learning | URL + HTML | URL branch + HTML branch + fusion + Dense. |
+| Model | Input | Role |
+|---|---|---|
+| `phish360_url_cnn` | URL | URL ablation |
+| `phish360_url_lstm` | URL | Sequence baseline |
+| `phish360_html_cnn` | HTML | HTML ablation |
+| `phish360_screenshot_cnn` | Screenshot | Visual ablation |
+| `phish360_dual_branch_cnn` | URL + HTML | Fusion baseline |
+| `phish360_tri_branch_cnn` | URL + HTML + Screenshot | Main model |
 
-## Cach doc ket qua
-
-- `baseline_tfidf_logreg`: moc so sanh tuyen tinh tren text URL + HTML.
-- `baseline_random_forest`: moc so sanh machine learning tren feature thu cong.
-- `url_cnn` va `url_lstm`: do kha nang hoc tu URL.
-- `html_cnn`: do kha nang hoc tu HTML source.
-- `dual_branch_cnn`: do kha nang ket hop URL + HTML bang fusion.
-
-Trong phishing detection, `Recall` cua class phishing rat quan trong vi bo sot phishing co rui ro cao. `F1` giup can bang precision/recall. `ROC-AUC` cho biet chat luong probability truoc khi chon threshold.
-
-## Luu y
-
-Ket qua ghi vao:
+Results:
 
 ```text
-reports/results/mendeley/model_comparison.csv
-```
-
-Figure ghi vao:
-
-```text
-reports/figures/mendeley/confusion_matrix_<model>.png
-reports/figures/mendeley/roc_curve_<model>.png
-```
-
-Neu artifact chua co `models/saved/html_cnn.pt` hoac `models/saved/dual_branch_cnn.pt`, khong nen noi model da hoc HTML deep learning that su. Luc do demo chi dang dung baseline hoac heuristic fallback.
-
-Neu artifact co `models/saved/dual_branch_cnn.pt`, co the mo ta he thong la:
-
-```text
-Dual-Branch CNN using URL and HTML source code
+reports/results/phish360/phish360_model_comparison.csv
+reports/figures/phish360/phish360_model_comparison_metrics.png
 ```

@@ -12,7 +12,6 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-import joblib
 import torch
 from sklearn.metrics import classification_report
 
@@ -21,7 +20,6 @@ from src.evaluation.metrics import (
     evaluate_binary_classification,
     save_metric_figures,
 )
-from src.features.handcrafted_features import handcrafted_feature_vector
 from src.models.dual_branch_cnn import DualBranchCnnClassifier
 from src.models.html_cnn import HtmlCnnClassifier
 from src.models.screenshot_cnn import ScreenshotCnnClassifier
@@ -38,12 +36,6 @@ DEFAULT_RESULTS = Path("reports/results/external_test")
 DEFAULT_FIGURES = Path("reports/figures/external_test")
 
 MODEL_SPECS = [
-    ("mendeley", "baseline_tfidf_logreg", Path("models/saved/baseline_tfidf_logreg.joblib"), "URL + HTML"),
-    ("mendeley", "baseline_random_forest", Path("models/saved/baseline_random_forest.joblib"), "URL + HTML"),
-    ("mendeley", "url_cnn", Path("models/saved/url_cnn.pt"), "URL"),
-    ("mendeley", "url_lstm", Path("models/saved/url_lstm.pt"), "URL"),
-    ("mendeley", "html_cnn", Path("models/saved/html_cnn.pt"), "HTML"),
-    ("mendeley", "dual_branch_cnn", Path("models/saved/dual_branch_cnn.pt"), "URL + HTML"),
     ("phish360", "phish360_url_cnn", Path("models/saved/phish360/phish360_url_cnn.pt"), "URL"),
     ("phish360", "phish360_url_lstm", Path("models/saved/phish360/phish360_url_lstm.pt"), "URL"),
     ("phish360", "phish360_html_cnn", Path("models/saved/phish360/phish360_html_cnn.pt"), "HTML"),
@@ -216,23 +208,9 @@ def predict_torch(artifact: dict, records: list[ExternalRecord], batch_size: int
     return probabilities
 
 
-def predict_joblib(path: Path, records: list[ExternalRecord]) -> tuple[list[float], float]:
-    artifact = joblib.load(path)
-    model = artifact.get("model") if isinstance(artifact, dict) else artifact
-    metadata = artifact.get("metadata", {}) if isinstance(artifact, dict) else {}
-    if metadata.get("feature_names"):
-        inputs = [handcrafted_feature_vector(record.url, record.html) for record in records]
-    else:
-        inputs = [f"{record.url} {record.html}" for record in records]
-    return [float(value) for value in model.predict_proba(inputs)[:, 1]], 0.5
-
-
 def read_internal_metrics() -> dict[str, dict]:
     metrics: dict[str, dict] = {}
-    paths = [
-        Path("reports/results/mendeley/model_comparison.csv"),
-        Path("reports/results/phish360/phish360_model_comparison.csv"),
-    ]
+    paths = [Path("reports/results/phish360/phish360_model_comparison.csv")]
     for path in paths:
         if not path.is_file():
             continue
@@ -301,13 +279,10 @@ def evaluate(args: argparse.Namespace) -> list[dict]:
             print(f"skip {model_name}: missing {model_path}")
             continue
         print(f"evaluating {model_name} ({model_input})")
-        if model_path.suffix == ".joblib":
-            probabilities, threshold = predict_joblib(model_path, records)
-        else:
-            checkpoint = torch.load(model_path, map_location="cpu", weights_only=False)
-            artifact = build_torch_model(checkpoint)
-            probabilities = predict_torch(artifact, records, args.batch_size)
-            threshold = artifact["threshold"]
+        checkpoint = torch.load(model_path, map_location="cpu", weights_only=False)
+        artifact = build_torch_model(checkpoint)
+        probabilities = predict_torch(artifact, records, args.batch_size)
+        threshold = artifact["threshold"]
         threshold_source = "override" if model_name in threshold_overrides else "checkpoint_or_default"
         threshold = threshold_overrides.get(model_name, threshold)
         metrics = evaluate_binary_classification(labels, probabilities, threshold=threshold)
@@ -442,7 +417,7 @@ def evaluate(args: argparse.Namespace) -> list[dict]:
     export_metric_chart(
         comparison,
         figures_dir / "external_model_comparison_metrics.png",
-        title="External Test Model Comparison (100 samples)",
+        title=f"External Test Model Comparison ({len(records)} samples)",
     )
     false_predictions = [row for row in predictions if not int(row["correct"])]
     write_csv(
@@ -473,7 +448,7 @@ def evaluate(args: argparse.Namespace) -> list[dict]:
         "threshold_policy": (
             f"threshold overrides from {args.threshold_overrides}; saved/default for missing models"
             if threshold_overrides
-            else "saved model threshold; 0.5 for joblib baselines"
+            else "saved Phish360 model threshold"
         ),
         "training_performed": False,
         "threshold_tuning_performed": bool(threshold_overrides),

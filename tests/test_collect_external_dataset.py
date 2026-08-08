@@ -198,16 +198,7 @@ def test_tranco_input_maps_headerless_domains_to_legitimate(tmp_path):
     assert {candidate.label for candidate in candidates} == {0}
 
 
-def test_leakage_index_reads_mendeley_and_phish360_hashes(tmp_path):
-    html_root = tmp_path / "html"
-    html_root.mkdir()
-    (html_root / "m.html").write_text("<html>mendeley</html>", encoding="utf-8")
-    mendeley = tmp_path / "mendeley.csv"
-    mendeley.write_text(
-        "url,html_file,label\nhttps://mendeley.test/,m.html,0\n",
-        encoding="utf-8",
-    )
-
+def test_leakage_index_reads_phish360_hashes(tmp_path):
     phish_html = tmp_path / "p.html"
     phish_html.write_text("<html>phish360</html>", encoding="utf-8")
     phish_image = tmp_path / "p.png"
@@ -232,12 +223,11 @@ def test_leakage_index_reads_mendeley_and_phish360_hashes(tmp_path):
             }
         )
 
-    index = build_leakage_index(mendeley, html_root, phish360, project_root=tmp_path)
+    index = build_leakage_index(phish360, project_root=tmp_path)
 
-    assert "https://mendeley.test/" in index.urls
     assert "https://phish.test/login" in index.urls
     assert "phish.test" in index.phishing_training_domains
-    assert len(index.html_hashes) == 2
+    assert len(index.html_hashes) == 1
     assert len(index.screenshot_hashes) == 1
 
 
