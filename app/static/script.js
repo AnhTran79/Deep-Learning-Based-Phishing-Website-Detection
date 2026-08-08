@@ -64,12 +64,12 @@ function buildRiskFactors(data) {
 function buildExplanation(data) {
   const percent = Math.round(data.phishing_probability * 100);
   if (data.risk_level === "phishing") {
-    return `Phishing score ${percent}%. Nguy co cao: khong nhap thong tin va khong tiep tuc truy cap.`;
+    return `Phishing score ${percent}%. High risk: do not enter personal information or continue to this website.`;
   }
   if (data.risk_level === "suspicious") {
-    return `Phishing score ${percent}%. Ket qua chua du chac chan, can kiem tra thu cong.`;
+    return `Phishing score ${percent}%. The result is uncertain and requires manual review.`;
   }
-  return `Phishing score ${percent}%. Co kha nang legitimate, nhung model khong bao dam website an toan tuyet doi.`;
+  return `Phishing score ${percent}%. Likely legitimate, but the model cannot guarantee that this website is safe.`;
 }
 
 function clearChildren(element) {
@@ -129,7 +129,7 @@ form.addEventListener("submit", async (event) => {
   if (!url) return;
 
   submitButton.disabled = true;
-  submitButton.textContent = "Dang phan tich";
+  submitButton.textContent = "Analyzing...";
 
   try {
     const response = await fetch("/api/predict", {
@@ -148,9 +148,9 @@ form.addEventListener("submit", async (event) => {
 
     const percent = Math.round(data.phishing_probability * 100);
     const labels = {
-      phishing: "Nguy co phishing cao",
-      suspicious: "Nghi ngo - can kiem tra",
-      legitimate: "Co kha nang legitimate",
+      phishing: "High phishing risk",
+      suspicious: "Suspicious - manual review",
+      legitimate: "Likely legitimate",
     };
 
     result.classList.remove("hidden", "phishing", "suspicious", "legitimate");
@@ -166,9 +166,9 @@ form.addEventListener("submit", async (event) => {
     renderFeatureCards(data);
     features.classList.remove("hidden");
   } catch (error) {
-    showError(error.message || "Khong the phan tich URL nay.");
+    showError(error.message || "Unable to analyze this URL.");
   } finally {
     submitButton.disabled = false;
-    submitButton.textContent = "Phan tich";
+    submitButton.textContent = "Analyze";
   }
 });

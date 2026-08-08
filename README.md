@@ -137,9 +137,9 @@ va hien `model_source = heuristic_url_html_rules`.
 Giao dien hien `phishing score` va ba muc khuyen nghi:
 
 ```text
-< 40%     -> Co kha nang legitimate
-40% - 75% -> Nghi ngo, can kiem tra thu cong
->= 75%    -> Nguy co phishing cao
+< 40%     -> Likely legitimate
+40% - 75% -> Suspicious - manual review
+>= 75%    -> High phishing risk
 ```
 
 Observed Signals la heuristic doc lap, khong duoc trinh bay nhu loi giai thich

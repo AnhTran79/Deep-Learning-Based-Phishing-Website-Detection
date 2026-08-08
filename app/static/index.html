@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -15,16 +15,16 @@
         </div>
 
         <form id="predict-form" class="form">
-          <label for="url">URL can kiem tra</label>
+          <label for="url">Website URL</label>
           <div class="input-row">
             <input id="url" name="url" type="text" placeholder="https://example.com/login" autocomplete="off" />
-            <button type="submit">Phan tich</button>
+            <button type="submit">Analyze</button>
           </div>
         </form>
 
         <section id="result" class="result hidden" aria-live="polite">
           <div>
-            <p class="result-label">Ket qua</p>
+            <p class="result-label">Result</p>
             <h2 id="label">-</h2>
             <p id="model-source" class="model-source"></p>
           </div>
@@ -35,11 +35,11 @@
         </section>
 
         <section id="explanation" class="explanation hidden">
-          <h3>Khuyen nghi</h3>
+          <h3>Recommendation</h3>
           <blockquote id="explanation-text"></blockquote>
 
           <h3>Observed Signals</h3>
-          <p class="signals-note">Cac tin hieu heuristic nay doc lap voi Tri-Branch CNN, khong phai loi giai thich cua model.</p>
+          <p class="signals-note">These heuristic signals are independent of the Tri-Branch CNN and are not explanations of the model's decision.</p>
           <div class="risk-table-wrap">
             <table class="risk-table">
               <thead>
