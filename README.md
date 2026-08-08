@@ -134,6 +134,17 @@ Demo dung Playwright de lay rendered HTML va screenshot cua URL, sau do chay
 Tri-Branch CNN. Neu checkpoint khong ton tai, demo chi dung heuristic fallback
 va hien `model_source = heuristic_url_html_rules`.
 
+Giao dien hien `phishing score` va ba muc khuyen nghi:
+
+```text
+< 40%     -> Co kha nang legitimate
+40% - 75% -> Nghi ngo, can kiem tra thu cong
+>= 75%    -> Nguy co phishing cao
+```
+
+Observed Signals la heuristic doc lap, khong duoc trinh bay nhu loi giai thich
+cho Tri-Branch CNN.
+
 ## External Validation
 
 Nguon candidate:

@@ -55,8 +55,8 @@ def _append_prediction_history(result: dict) -> None:
             fieldnames=[
                 "timestamp_utc",
                 "url",
+                "risk_level",
                 "label",
-                "confidence",
                 "phishing_probability",
                 "model_source",
                 "html_available",
@@ -68,8 +68,8 @@ def _append_prediction_history(result: dict) -> None:
             {
                 "timestamp_utc": datetime.now(timezone.utc).isoformat(),
                 "url": result.get("url", ""),
+                "risk_level": result.get("risk_level", ""),
                 "label": result.get("label", ""),
-                "confidence": result.get("confidence", ""),
                 "phishing_probability": result.get("phishing_probability", ""),
                 "model_source": result.get("model_source", ""),
                 "html_available": (result.get("html_fetch") or {}).get("available", ""),

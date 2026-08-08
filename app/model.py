@@ -27,6 +27,16 @@ except ModuleNotFoundError:  # pragma: no cover
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 PHISH360_TRI_BRANCH_CNN_PATH = PROJECT_ROOT / "models" / "saved" / "phish360" / "phish360_tri_branch_cnn.pt"
+LEGITIMATE_MAX_SCORE = 0.40
+PHISHING_MIN_SCORE = 0.75
+
+
+def risk_level_for_score(score: float) -> str:
+    if score >= PHISHING_MIN_SCORE:
+        return "phishing"
+    if score >= LEGITIMATE_MAX_SCORE:
+        return "suspicious"
+    return "legitimate"
 
 
 class PhishingDetector:
@@ -152,11 +162,10 @@ class PhishingDetector:
         )
 
         label = "phishing" if phishing_probability >= threshold else "legitimate"
-        confidence = phishing_probability if label == "phishing" else 1.0 - phishing_probability
         return {
             "url": normalized_url,
             "label": label,
-            "confidence": round(confidence, 4),
+            "risk_level": risk_level_for_score(phishing_probability),
             "phishing_probability": round(phishing_probability, 4),
             "model_source": model_source,
             "features": feature_values,

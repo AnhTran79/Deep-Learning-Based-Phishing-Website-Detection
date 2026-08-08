@@ -123,6 +123,11 @@ button:disabled {
   border-color: #bfe3c5;
 }
 
+.result.suspicious {
+  background: #fff7e6;
+  border-color: #f0cc87;
+}
+
 .result-label {
   color: #596760;
   font-size: 13px;
@@ -185,6 +190,12 @@ h2 {
   padding: 14px 16px;
 }
 
+.signals-note {
+  color: #596760;
+  font-size: 14px;
+  margin: -6px 0 14px;
+}
+
 .risk-table-wrap {
   overflow-x: auto;
 }
@@ -212,32 +223,6 @@ h2 {
 
 .risk-table td {
   color: #18211f;
-}
-
-.risk {
-  border-radius: 999px;
-  display: inline-block;
-  font-size: 13px;
-  font-weight: 800;
-  min-width: 64px;
-  padding: 4px 10px;
-  text-align: center;
-}
-
-.risk.high {
-  background: #fff1f0;
-  color: #b42318;
-}
-
-.risk.medium {
-  background: #fff7e6;
-  color: #985f0d;
-}
-
-.risk.low,
-.risk.safe {
-  background: #eef8f0;
-  color: #1f7a3d;
 }
 
 .features {

@@ -3,7 +3,7 @@ const urlInput = document.querySelector("#url");
 const submitButton = form.querySelector("button");
 const result = document.querySelector("#result");
 const label = document.querySelector("#label");
-const confidence = document.querySelector("#confidence");
+const phishingScore = document.querySelector("#phishing-score");
 const modelSource = document.querySelector("#model-source");
 const explanation = document.querySelector("#explanation");
 const explanationText = document.querySelector("#explanation-text");
@@ -36,63 +36,40 @@ const visibleFeatures = [
   ["has_javascript_redirect", "JS redirect"],
 ];
 
-function riskLevel(value, highWhenDetected = true) {
-  if (!value) return highWhenDetected ? "Safe" : "Low";
-  return highWhenDetected ? "High" : "Medium";
-}
-
 function statusText(value) {
-  return value ? "Detected" : "Not Found";
+  return value ? "Detected" : "Not detected";
 }
 
 function buildRiskFactors(data) {
   const f = data.features || {};
   return [
-    ["Public Hosting", statusText(f.has_public_hosting_platform), riskLevel(f.has_public_hosting_platform)],
-    ["Brand Impersonation", statusText(f.has_brand_impersonation), riskLevel(f.has_brand_impersonation)],
-    ["URL Shortener", statusText(f.has_url_shortener), riskLevel(f.has_url_shortener)],
-    ["Redirect Parameter", statusText(f.has_redirect_param), riskLevel(f.has_redirect_param)],
-    ["Embedded URL", statusText(f.has_embedded_url), riskLevel(f.has_embedded_url)],
-    ["Risky TLD", statusText(f.has_suspicious_tld), riskLevel(f.has_suspicious_tld)],
-    ["IP Address", statusText(f.has_ip), riskLevel(f.has_ip)],
-    ["At Symbol", statusText(f.has_at), riskLevel(f.has_at)],
-    ["Long Token", statusText(f.has_long_token), riskLevel(f.has_long_token)],
-    ["Encoded Characters", statusText(f.has_encoded_chars), riskLevel(f.has_encoded_chars, false)],
-    ["HTML Available", statusText(f.html_available), f.html_available ? "Low" : "Medium"],
-    ["Login Form", statusText(f.has_login_form), riskLevel(f.has_login_form)],
-    ["Password Input", statusText(f.num_password_inputs), riskLevel(f.num_password_inputs)],
-    ["Meta Refresh", statusText(f.has_meta_refresh), riskLevel(f.has_meta_refresh)],
-    ["JavaScript Redirect", statusText(f.has_javascript_redirect), riskLevel(f.has_javascript_redirect)],
+    ["Public Hosting", statusText(f.has_public_hosting_platform)],
+    ["Brand Impersonation", statusText(f.has_brand_impersonation)],
+    ["URL Shortener", statusText(f.has_url_shortener)],
+    ["Redirect Parameter", statusText(f.has_redirect_param)],
+    ["Embedded URL", statusText(f.has_embedded_url)],
+    ["Risky TLD", statusText(f.has_suspicious_tld)],
+    ["IP Address", statusText(f.has_ip)],
+    ["At Symbol", statusText(f.has_at)],
+    ["Long Token", statusText(f.has_long_token)],
+    ["Encoded Characters", statusText(f.has_encoded_chars)],
+    ["HTML Collection", f.html_available ? "Available" : "Unavailable"],
+    ["Login Form", statusText(f.has_login_form)],
+    ["Password Input", statusText(f.num_password_inputs)],
+    ["Meta Refresh", statusText(f.has_meta_refresh)],
+    ["JavaScript Redirect", statusText(f.has_javascript_redirect)],
   ];
 }
 
 function buildExplanation(data) {
-  const f = data.features || {};
-  const reasons = [];
-
-  if (f.has_public_hosting_platform) reasons.push("website su dung public hosting");
-  if (f.has_brand_impersonation) reasons.push("URL co dau hieu gia mao brand/crypto");
-  if (f.has_url_shortener) reasons.push("URL dung shortener");
-  if (f.has_redirect_param) reasons.push("URL co tham so redirect");
-  if (f.has_embedded_url) reasons.push("URL long URL khac ben trong");
-  if (f.has_ip) reasons.push("URL dung dia chi IP");
-  if (f.has_at) reasons.push("URL co ky tu @");
-  if (f.has_long_token) reasons.push("URL co token dai bat thuong");
-  if (f.has_login_form) reasons.push("HTML co form dang nhap");
-  if (f.num_password_inputs) reasons.push("HTML co password input");
-  if (f.has_meta_refresh) reasons.push("HTML co meta refresh");
-  if (f.has_javascript_redirect) reasons.push("HTML co JavaScript redirect");
-
-  if (data.label === "phishing") {
-    const detail = reasons.length ? reasons.join(", ") : "xac suat phishing vuot nguong cua mo hinh";
-    return `Mo hinh danh gia phishing chu yeu do ${detail}.`;
+  const percent = Math.round(data.phishing_probability * 100);
+  if (data.risk_level === "phishing") {
+    return `Phishing score ${percent}%. Nguy co cao: khong nhap thong tin va khong tiep tuc truy cap.`;
   }
-
-  if (reasons.length) {
-    return `Mo hinh van phan loai legitimate, nhung can luu y: ${reasons.join(", ")}.`;
+  if (data.risk_level === "suspicious") {
+    return `Phishing score ${percent}%. Ket qua chua du chac chan, can kiem tra thu cong.`;
   }
-
-  return "Mo hinh phan loai legitimate vi chua thay cac dau hieu rui ro manh trong URL.";
+  return `Phishing score ${percent}%. Co kha nang legitimate, nhung model khong bao dam website an toan tuyet doi.`;
 }
 
 function clearChildren(element) {
@@ -103,19 +80,14 @@ function clearChildren(element) {
 
 function renderRiskFactors(rows) {
   clearChildren(riskFactors);
-  rows.forEach(([feature, status, risk]) => {
+  rows.forEach(([feature, status]) => {
     const row = document.createElement("tr");
     const featureCell = document.createElement("td");
     const statusCell = document.createElement("td");
-    const riskCell = document.createElement("td");
-    const riskBadge = document.createElement("span");
 
     featureCell.textContent = feature;
     statusCell.textContent = status;
-    riskBadge.className = `risk ${risk.toLowerCase()}`;
-    riskBadge.textContent = risk;
-    riskCell.appendChild(riskBadge);
-    row.append(featureCell, statusCell, riskCell);
+    row.append(featureCell, statusCell);
     riskFactors.appendChild(row);
   });
 }
@@ -141,10 +113,10 @@ function createFeatureCard(title, value) {
 }
 
 function showError(message) {
-  result.classList.remove("hidden", "phishing", "legitimate");
+  result.classList.remove("hidden", "phishing", "suspicious", "legitimate");
   result.classList.add("phishing");
   label.textContent = "error";
-  confidence.textContent = "0%";
+  phishingScore.textContent = "0%";
   modelSource.textContent = message;
   explanation.classList.add("hidden");
   features.classList.add("hidden");
@@ -174,12 +146,17 @@ form.addEventListener("submit", async (event) => {
       throw new Error(detail);
     }
 
-    const percent = Math.round(data.confidence * 100);
+    const percent = Math.round(data.phishing_probability * 100);
+    const labels = {
+      phishing: "Nguy co phishing cao",
+      suspicious: "Nghi ngo - can kiem tra",
+      legitimate: "Co kha nang legitimate",
+    };
 
-    result.classList.remove("hidden", "phishing", "legitimate");
-    result.classList.add(data.label);
-    label.textContent = data.label;
-    confidence.textContent = `${percent}%`;
+    result.classList.remove("hidden", "phishing", "suspicious", "legitimate");
+    result.classList.add(data.risk_level);
+    label.textContent = labels[data.risk_level] || data.risk_level;
+    phishingScore.textContent = `${percent}%`;
     modelSource.textContent = data.model_source;
 
     explanationText.textContent = buildExplanation(data);

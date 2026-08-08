@@ -29,23 +29,23 @@
             <p id="model-source" class="model-source"></p>
           </div>
           <div class="score">
-            <span id="confidence">0%</span>
-            <small>confidence</small>
+            <span id="phishing-score">0%</span>
+            <small>phishing score</small>
           </div>
         </section>
 
         <section id="explanation" class="explanation hidden">
-          <h3>AI Explanation</h3>
+          <h3>Khuyen nghi</h3>
           <blockquote id="explanation-text"></blockquote>
 
-          <h3>Risk Factors</h3>
+          <h3>Observed Signals</h3>
+          <p class="signals-note">Cac tin hieu heuristic nay doc lap voi Tri-Branch CNN, khong phai loi giai thich cua model.</p>
           <div class="risk-table-wrap">
             <table class="risk-table">
               <thead>
                 <tr>
-                  <th>Feature</th>
-                  <th>Status</th>
-                  <th>Risk</th>
+                  <th>Signal</th>
+                  <th>Observation</th>
                 </tr>
               </thead>
               <tbody id="risk-factors"></tbody>
