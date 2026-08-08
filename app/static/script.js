@@ -4,6 +4,7 @@ const submitButton = form.querySelector("button");
 const result = document.querySelector("#result");
 const label = document.querySelector("#label");
 const phishingScore = document.querySelector("#phishing-score");
+const scoreLabel = document.querySelector("#score-label");
 const modelSource = document.querySelector("#model-source");
 const explanation = document.querySelector("#explanation");
 const explanationText = document.querySelector("#explanation-text");
@@ -63,13 +64,16 @@ function buildRiskFactors(data) {
 
 function buildExplanation(data) {
   const percent = Math.round(data.phishing_probability * 100);
+  if (data.model_source !== "phish360_tri_branch_cnn") {
+    return "The Tri-Branch CNN could not complete all three inputs. Heuristic checks are not a calibrated probability, so no safety conclusion can be made. Manual review is required.";
+  }
   if (data.risk_level === "phishing") {
     return `Phishing score ${percent}%. High risk: do not enter personal information or continue to this website.`;
   }
   if (data.risk_level === "suspicious") {
     return `Phishing score ${percent}%. The result is uncertain and requires manual review.`;
   }
-  return `Phishing score ${percent}%. Likely legitimate, but the model cannot guarantee that this website is safe.`;
+  return `Phishing score ${percent}%. Few phishing patterns were detected, but this is not proof that the website is safe.`;
 }
 
 function clearChildren(element) {
@@ -147,17 +151,19 @@ form.addEventListener("submit", async (event) => {
     }
 
     const percent = Math.round(data.phishing_probability * 100);
+    const limitedAnalysis = data.model_source !== "phish360_tri_branch_cnn";
     const labels = {
       phishing: "High phishing risk",
-      suspicious: "Suspicious - manual review",
-      legitimate: "Likely legitimate",
+      suspicious: limitedAnalysis ? "Limited analysis - manual review" : "Suspicious - manual review",
+      legitimate: "Low phishing likelihood",
     };
 
     result.classList.remove("hidden", "phishing", "suspicious", "legitimate");
     result.classList.add(data.risk_level);
     label.textContent = labels[data.risk_level] || data.risk_level;
-    phishingScore.textContent = `${percent}%`;
-    modelSource.textContent = data.model_source;
+    phishingScore.textContent = limitedAnalysis ? "N/A" : `${percent}%`;
+    scoreLabel.textContent = limitedAnalysis ? "model score unavailable" : "model phishing score";
+    modelSource.textContent = limitedAnalysis ? "Heuristic fallback (Tri-Branch unavailable)" : "Tri-Branch CNN";
 
     explanationText.textContent = buildExplanation(data);
     renderRiskFactors(buildRiskFactors(data));

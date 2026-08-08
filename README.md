@@ -137,13 +137,16 @@ va hien `model_source = heuristic_url_html_rules`.
 Giao dien hien `phishing score` va ba muc khuyen nghi:
 
 ```text
-< 40%     -> Likely legitimate
+< 40%     -> Low phishing likelihood
 40% - 75% -> Suspicious - manual review
 >= 75%    -> High phishing risk
 ```
 
 Observed Signals la heuristic doc lap, khong duoc trinh bay nhu loi giai thich
 cho Tri-Branch CNN.
+Neu Tri-Branch khong chay du ca ba nhanh, heuristic fallback luon tra ve
+`Limited analysis - manual review`, an phan tram va tra nhan `inconclusive`
+thay vi ket luan legitimate.
 
 ## External Validation
 

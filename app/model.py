@@ -31,9 +31,11 @@ LEGITIMATE_MAX_SCORE = 0.40
 PHISHING_MIN_SCORE = 0.75
 
 
-def risk_level_for_score(score: float) -> str:
+def risk_level_for_score(score: float, *, deep_model_available: bool = True) -> str:
     if score >= PHISHING_MIN_SCORE:
         return "phishing"
+    if not deep_model_available:
+        return "suspicious"
     if score >= LEGITIMATE_MAX_SCORE:
         return "suspicious"
     return "legitimate"
@@ -161,11 +163,18 @@ class PhishingDetector:
             else self.threshold
         )
 
-        label = "phishing" if phishing_probability >= threshold else "legitimate"
+        risk_level = risk_level_for_score(
+            phishing_probability,
+            deep_model_available=model_source == "phish360_tri_branch_cnn",
+        )
+        if model_source != "phish360_tri_branch_cnn" and risk_level != "phishing":
+            label = "inconclusive"
+        else:
+            label = "phishing" if phishing_probability >= threshold else "legitimate"
         return {
             "url": normalized_url,
             "label": label,
-            "risk_level": risk_level_for_score(phishing_probability),
+            "risk_level": risk_level,
             "phishing_probability": round(phishing_probability, 4),
             "model_source": model_source,
             "features": feature_values,
