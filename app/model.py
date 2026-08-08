@@ -110,7 +110,7 @@ class PhishingDetector:
                 image = load_image_tensor(screenshot_path, image_size=self.tri_branch_artifact["image_size"])
                 return html, image, None
         except Exception as exc:
-            return None, None, str(exc)
+            return None, None, f"{type(exc).__name__}: {exc}"
 
     def _predict_tri_branch(self, url: str, html: str | None, image) -> float | None:
         artifact = self.tri_branch_artifact
